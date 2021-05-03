@@ -324,9 +324,8 @@ const Posts = ({navigation}) => {
     const renderItem = ({ item }) => (
         <TouchableOpacity
             style={{ marginBottom: SIZES.padding * 2 }}
-            onPress={() => navigation.navigate("Restaurant", {
-                item,
-                currentLocation
+            onPress={() => navigation.navigate("PostsDetail", {
+                item
             })}
         >
             {/* Image */}

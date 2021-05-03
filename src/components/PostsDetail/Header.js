@@ -1,29 +1,20 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Image, Text} from 'react-native';
-import { icons, SIZES, COLORS, FONTS } from '../constants';
+import React from 'react';
+import { View, Text, Image, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
+import { COLORS, FONTS, SIZES, icons } from '../../constants';
 
-const initialCurrentLocation = {
-    streetName: "Kuching",
-    gps: {
-        latitude: 1.5496614931250685,
-        longitude: 110.36381866919922
-    }
-}
-
-const Header = (props) => {
-    const [currentLocation, setCurrentLocation] = useState(initialCurrentLocation)
-
+const Header = ({navigation}) => {
     return (
-        <View style={{ flexDirection: 'row', height: 50 }}>
+        <View style={{ flexDirection: 'row' }}>
             <TouchableOpacity
                 style={{
                     width: 50,
                     paddingLeft: SIZES.padding * 2,
                     justifyContent: 'center'
                 }}
+                onPress={() => navigation.goBack()}
             >
                 <Image
-                    source={icons.nearby}
+                    source={icons.back}
                     resizeMode="contain"
                     style={{
                         width: 30,
@@ -32,18 +23,25 @@ const Header = (props) => {
                 />
             </TouchableOpacity>
 
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            {/* Name POST Section */}
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
                 <View
                     style={{
-                        width: '70%',
-                        height: "100%",
-                        backgroundColor: COLORS.lightGray3,
+                        height: 50,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        borderRadius: SIZES.radius
+                        paddingHorizontal: SIZES.padding * 3,
+                        borderRadius: SIZES.radius,
+                        backgroundColor: COLORS.lightGray3
                     }}
                 >
-                    <Text style={{ ...FONTS.h3 }}>{currentLocation.streetName}</Text>
+                    <Text style={{ ...FONTS.h3 }}>POST NAME</Text>
                 </View>
             </View>
 
@@ -55,7 +53,7 @@ const Header = (props) => {
                 }}
             >
                 <Image
-                    source={icons.basket}
+                    source={icons.list}
                     resizeMode="contain"
                     style={{
                         width: 30,
