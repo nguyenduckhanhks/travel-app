@@ -2,6 +2,7 @@ import React from 'react'
 import { createStackNavigator } from "@react-navigation/stack";
 
 import BottomTabNavigator from './bottomTabNavigator';
+import Login from '../screens/Login';
 
 const Stack = createStackNavigator();
 
@@ -11,9 +12,10 @@ const StackNavigator = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName={'Home'}
+            initialRouteName={'Login'}
         >
             <Stack.Screen name="Home" component={BottomTabNavigator} />
+            <Stack.Screen name="Login" component={Login} />
         </Stack.Navigator>
     )
 }
