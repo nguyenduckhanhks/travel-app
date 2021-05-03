@@ -5,11 +5,12 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, FONTS } from '../constants';
 // import firebase, { auth } from 'react-native-firebase'
 
-const Login = ({navigation}) => {
+const Signup = ({navigation}) => {
     const [email, setEmail] = useState('user2@gmail.com')
     const [password, setPassword] = useState('111111')
+    const [confirmPassword, setConfirmPassword] = useState('111111')
 
-    const onLogin = () => {
+    const onSignup = () => {
         // firebase.auth().signInWithEmailAndPassword(email, password)
         // .then((res) => {
         //     props.navigation.navigate('Home')
@@ -23,7 +24,7 @@ const Login = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View>
-                <Text style={styles.title}>Đăng nhập</Text>
+                <Text style={styles.title}>Đăng ký</Text>
             </View>
             <View>
                 <View style={styles.inputSection}>
@@ -45,6 +46,16 @@ const Login = ({navigation}) => {
                         onChangeText={setPassword}
                     />
                 </View>
+                <View style={styles.inputSection}>
+                    <Icon style={styles.inputIcon} name="lock-closed-outline" size={20} color="#f20042"/>
+                    <TextInput
+                        placeholder='Xác nhận Mật khâu'
+                        secureTextEntry={true}
+                        style={styles.input}
+                        value={confirmPassword}
+                        onChangeText={setConfirmPassword}
+                    />
+                </View>
                 <Text 
                     style={{textAlign: 'right', marginTop: 5, fontSize: 15}}
                     onPress={() => {
@@ -56,11 +67,11 @@ const Login = ({navigation}) => {
 
                 <TouchableOpacity 
                     style={styles.button} 
-                    onPress={() => onLogin()}
+                    onPress={() => onSignup()}
                 >
                     <LinearGradient colors={[COLORS.primary, COLORS.primary]} style={styles.gradient}>
                         <Text style={styles.text}>
-                                Đăng nhập</Text>
+                                Đăng ký</Text>
                     </LinearGradient>
                 </TouchableOpacity>
 
@@ -68,10 +79,10 @@ const Login = ({navigation}) => {
                     <Text 
                         style={{fontSize: 17, color: COLORS.primary}}
                         onPress={() => {
-                            navigation.navigate('SignUp')
+                            navigation.navigate('Login')
                         }}
                     >
-                        Sign up here
+                        Login here
                     </Text>
                 </View>
             </View>
@@ -79,7 +90,7 @@ const Login = ({navigation}) => {
     )
 }
 
-export default Login
+export default Signup
 
 const styles = StyleSheet.create({
     container: {
