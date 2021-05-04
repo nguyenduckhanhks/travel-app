@@ -33,7 +33,7 @@ const PostInfo = ({postData}) => {
                 pagingEnabled
                 scrollEventThrottle={16}
                 snapToAlignment="center"
-                showsVeticalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
                 onScroll={Animated.event([
                     { nativeEvent: { contentOffset: { x: scrollX } } }
                 ], { useNativeDriver: false })}
