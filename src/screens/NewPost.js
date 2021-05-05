@@ -5,11 +5,12 @@ import {
     StyleSheet, 
     TextInput, 
     TouchableOpacity, 
-    Image
+    Image,
+    SafeAreaView
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS, FONTS, images, SIZES } from '../constants';
+import { COLORS, FONTS, images, SIZES, icons } from '../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -46,14 +47,52 @@ const NewPost = ({navigation}) => {
     };
     
     return (
-            <KeyboardAwareScrollView style={{marginBottom: 50}}>
-                <View 
-                    style={styles.container}
+        <SafeAreaView style={{marginBottom: 50}}>
+            {/* Header */}
+            <View style={{ flexDirection: 'row', height: 50 }}>
+                <TouchableOpacity
+                    style={{
+                        width: 50,
+                        paddingLeft: SIZES.padding * 2,
+                        justifyContent: 'center'
+                    }}
+                    onPress={() => navigation.goBack()}
                 >
-                    <View>
-                        <Text style={styles.title}>Thêm địa điểm</Text>
-                    </View>
+                    <Image
+                        source={icons.back}
+                        resizeMode="contain"
+                        style={{
+                            width: 30,
+                            height: 30
+                        }}
+                    />
+                </TouchableOpacity>
 
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <View
+                        style={{
+                            width: '70%',
+                            height: "100%",
+                            backgroundColor: COLORS.lightGray3,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: SIZES.radius
+                        }}
+                    >
+                        <Text style={{ ...FONTS.h3 }}>Thêm địa điểm</Text>
+                    </View>
+                </View>
+                
+                <View
+                    style={{
+                        width: 50,
+                        paddingLeft: SIZES.padding * 2,
+                        justifyContent: 'center'
+                    }}
+                ></View>
+            </View>
+            <KeyboardAwareScrollView>
+                <View style={styles.container}>
                     {/* Image */}
                     <View style={{height: 210, marginVertical: 20}}>
                         <View style={{
@@ -141,6 +180,7 @@ const NewPost = ({navigation}) => {
                 </View>
 
             </KeyboardAwareScrollView>
+        </SafeAreaView>
     )
 }
 
@@ -149,7 +189,6 @@ export default NewPost
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 30,
-        paddingTop: 40,
         marginBottom: 50,
         flex: 1
     },

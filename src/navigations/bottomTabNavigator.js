@@ -5,6 +5,7 @@ import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom
 
 import { COLORS, icons } from "../constants";
 import Home from '../screens/Home';
+import Profile from '../screens/Profile';
 
 const TabBarCustomButton = ({ accessibilityState, children, onPress }) => {
 
@@ -115,6 +116,29 @@ const BottomTabNavigator = () => {
                     tabBarIcon: ({ focused }) => (
                         <Image
                             source={icons.like}
+                            resizeMode="contain"
+                            style={{
+                                width: 25,
+                                height: 25,
+                                tintColor: focused ? COLORS.primary : COLORS.secondary
+                            }}
+                        />
+                    ),
+                    tabBarButton: (props) => (
+                        <TabBarCustomButton
+                            {...props}
+                        />
+                    )
+                }}
+            />
+
+            <Tab.Screen
+                name="Profile"
+                component={Profile}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <Image
+                            source={icons.user}
                             resizeMode="contain"
                             style={{
                                 width: 25,

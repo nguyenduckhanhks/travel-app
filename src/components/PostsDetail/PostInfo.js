@@ -67,7 +67,7 @@ const PostInfo = ({postData}) => {
                     </Text>
                 </View>
 
-                {/* Price */}
+                {/* Description */}
                 <Text style={{...FONTS.h2}}>Description</Text>
                 <Text style={{marginTop: 20, color: '#767676'}}>
                     Lorem Ipsum is simply dummy text of the printing and typesetting industry. 

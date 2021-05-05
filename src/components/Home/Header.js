@@ -10,7 +10,7 @@ const initialCurrentLocation = {
     }
 }
 
-const Header = (props) => {
+const Header = ({navigation}) => {
     const [currentLocation, setCurrentLocation] = useState(initialCurrentLocation)
 
     return (
@@ -53,9 +53,10 @@ const Header = (props) => {
                     paddingRight: SIZES.padding * 2,
                     justifyContent: 'center'
                 }}
+                onPress={() => navigation.navigate('NewPost')}
             >
                 <Image
-                    source={icons.basket}
+                    source={icons.plus}
                     resizeMode="contain"
                     style={{
                         width: 30,

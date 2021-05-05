@@ -9,7 +9,7 @@ import Posts from '../components/Home/Posts';
 const Home = (props) => {
     return (
         <SafeAreaView style={styles.container}>
-            <Header/>
+            <Header navigation={props.navigation}/>
             <Catagory/>
             <Posts 
                 navigation={props.navigation}
