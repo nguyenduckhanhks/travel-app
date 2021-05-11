@@ -3,22 +3,49 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'reac
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, FONTS } from '../constants';
-// import firebase, { auth } from 'react-native-firebase'
+import * as firebase from 'firebase';
 
 const Signup = ({navigation}) => {
-    const [email, setEmail] = useState('user2@gmail.com')
+    const [name, setName] = useState('Nguyen Van A')
+    const [email, setEmail] = useState('user1@gmail.com')
     const [password, setPassword] = useState('111111')
     const [confirmPassword, setConfirmPassword] = useState('111111')
 
     const onSignup = () => {
-        // firebase.auth().signInWithEmailAndPassword(email, password)
-        // .then((res) => {
-        //     props.navigation.navigate('Home')
-        // })
-        // .catch(error => {
-        //     Alert.alert('Email hoặc mật khẩu không chính xác!')
-        // });
-        navigation.navigate('Home')
+        if(!email || !name || !password || !confirmPassword) Alert.alert('Vui lòng nhập đủ thông tin cần thiết!')
+        if(password !== confirmPassword) Alert.alert('Mật khẩu nhập vào không khớp nhau!')
+
+        firebase.auth().createUserWithEmailAndPassword(email, password).then(res => {
+            let newUser = {
+                id: res['user']['uid'],
+                name: name,
+                email: email,
+                tel: '',
+                birthday: null,
+                avatar: '',
+                bgImage: '',
+                status: 'online',
+                address: 'Viet Nam',
+                description: ''
+            }
+            if(res['user']['uid']) {
+                firebase.firestore()
+                        .collection('users')
+                        .doc(res['user']['uid'])
+                        .set(newUser)
+                        .then(() => {
+                            Alert.alert('Đăng ký tài khoản thành công!')
+                            navigation.navigate('Profile', {
+                                type: 'myProfile'
+                            })
+                        })
+                        .catch(err => {
+                            Alert.alert(err['message'])
+                        })
+            }
+        }).catch(err => {
+            Alert.alert(err['message'])
+        })
     }
 
     return (
@@ -29,6 +56,15 @@ const Signup = ({navigation}) => {
             <View>
                 <View style={styles.inputSection}>
                     <Icon style={styles.inputIcon} name="person-outline" size={20} color="#f20042"/>
+                    <TextInput
+                        placeholder='Tên người dùng'
+                        style={styles.input}
+                        value={name}
+                        onChangeText={setName}
+                    />
+                </View>
+                <View style={styles.inputSection}>
+                    <Icon style={styles.inputIcon} name="mail-outline" size={20} color="#f20042"/>
                     <TextInput
                         placeholder='Email'
                         style={styles.input}

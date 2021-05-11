@@ -1,9 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native'
-import * as Font from 'expo-font';
-import { AppLoading } from "expo";
 import { useFonts } from "@use-expo/font";
 import { View } from 'react-native';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 
 import StackNavigator from './src/navigations/navigator';
 
@@ -13,9 +13,23 @@ const customFonts = {
     'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
 };
 
+const firebaseConfig = {
+  apiKey: "AIzaSyAAQB-3eTkdorDEB0SJvMxsBnd1Ed2OM-A",
+  authDomain: "travel-app-d755f.firebaseapp.com",
+  projectId: "travel-app-d755f",
+  storageBucket: "travel-app-d755f.appspot.com",
+  messagingSenderId: "379310522450",
+  appId: "1:379310522450:web:bac9b80c7560df16a09f8b"
+};
+
 
 export default function App() {
   const [isLoaded] = useFonts(customFonts);
+
+  if(firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
   if (!isLoaded) {
       return (
         <View></View>

@@ -1,15 +1,38 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, TextInput, SafeAreaView, Text, TouchableOpacity, Image, StyleSheet, Modal } from 'react-native';
 import {COLORS, icons, SIZES, FONTS, images} from '../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Posts from '../components/Home/Posts';
 import EditProfile from '../components/Profile/EditProfile';
+import * as firebase from 'firebase'
 
 const Profile = ({navigation}) => {
+    const [uidLogin, setUidLogin] = useState('')
+    const [userData, setUserData] = useState(null)
+
     const [mode, setMode] = useState(['Post'])
 
+    useEffect(() => {
+        firebase.auth().onAuthStateChanged(user => {
+            if(!user) return navigation.navigate('Login')
+            let uidLogin = user['uid']
+            setUidLogin(uidLogin)
+        })
+        getData()
+    }, [uidLogin])
+    
     const changeMode = (newMode) => {
         setMode(newMode)
+    }
+
+    const getData = () => {
+        if(!uidLogin) return
+        firebase.firestore()
+                .collection('users')
+                .doc(uidLogin)
+                .onSnapshot(doc => {
+                    setUserData(doc.data())
+                })
     }
 
     return (
@@ -71,11 +94,11 @@ const Profile = ({navigation}) => {
                 />
 
                 {/* name */}
-                <Text style={styles.name}>Hasan Mahmud</Text>
+                <Text style={styles.name}>{userData['name']}</Text>
                 
                 {/* mô tả */}
                 <Text style={styles.description}>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                    {userData['description']}
                 </Text>
                 
                 {/* Location Address */}
@@ -94,7 +117,7 @@ const Profile = ({navigation}) => {
                             marginRight: 10
                         }}
                     />
-                    <Text style={{...FONTS.body4}}>Bangkok, Thai Lan</Text>
+                    <Text style={{...FONTS.body4}}>{userData['address']}</Text>
                 </View>
 
                 {/* Menu */}

@@ -1,22 +1,28 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, FONTS } from '../constants';
-// import firebase, { auth } from 'react-native-firebase'
+import * as firebase from 'firebase'
 
 const Login = ({navigation}) => {
-    const [email, setEmail] = useState('user2@gmail.com')
+    const [email, setEmail] = useState('user1@gmail.com')
     const [password, setPassword] = useState('111111')
 
+    useEffect(() => {
+        firebase.auth().onAuthStateChanged(user => {
+            if(user) return navigation.navigate('Home') 
+        })
+    })
+
     const onLogin = () => {
-        // firebase.auth().signInWithEmailAndPassword(email, password)
-        // .then((res) => {
-        //     props.navigation.navigate('Home')
-        // })
-        // .catch(error => {
-        //     Alert.alert('Email hoặc mật khẩu không chính xác!')
-        // });
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((res) => {
+            navigation.navigate('Home')
+        })
+        .catch(error => {
+            Alert.alert('Email hoặc mật khẩu không chính xác!')
+        });
         navigation.navigate('Home')
     }
 
@@ -68,7 +74,7 @@ const Login = ({navigation}) => {
                     <Text 
                         style={{fontSize: 17, color: COLORS.primary}}
                         onPress={() => {
-                            navigation.navigate('SignUp')
+                            navigation.navigate('Signup')
                         }}
                     >
                         Sign up here
