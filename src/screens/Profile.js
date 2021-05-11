@@ -1,11 +1,19 @@
-import React from 'react';
-import { View, TextInput, SafeAreaView, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import { View, TextInput, SafeAreaView, Text, TouchableOpacity, Image, StyleSheet, Modal } from 'react-native';
 import {COLORS, icons, SIZES, FONTS, images} from '../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Posts from '../components/Home/Posts';
+import EditProfile from '../components/Profile/EditProfile';
 
 const Profile = ({navigation}) => {
+    const [mode, setMode] = useState(['Post'])
+
+    const changeMode = (newMode) => {
+        setMode(newMode)
+    }
+
     return (
-        <SafeAreaView  style={{marginBottom: 50}}>
+        <SafeAreaView style={{backgroundColor: COLORS.lightGray4, flex: 1,}}>
             <View style={{ flexDirection: 'row', height: 50 }}>
                 <TouchableOpacity
                     style={{
@@ -68,7 +76,6 @@ const Profile = ({navigation}) => {
                 {/* mô tả */}
                 <Text style={styles.description}>
                     Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s
                 </Text>
                 
                 {/* Location Address */}
@@ -90,21 +97,158 @@ const Profile = ({navigation}) => {
                     <Text style={{...FONTS.body4}}>Bangkok, Thai Lan</Text>
                 </View>
 
-                <KeyboardAwareScrollView>
-                    <View style={{display: 'flex', flexDirection: 'row'}}>
-                        {[1,2,3,4,5,6].map(img => 
+                {/* Menu */}
+                <View 
+                    style={styles.menu}
+                >
+                    <View style={{flexDirection:'row'}}>
+                        <TouchableOpacity
+                            style={[styles.menuItem, mode == 'Post' ? styles.menuItemActive : '']}
+                            onPress={() => changeMode('Post')}
+                        >
                             <Image 
-                                key={img}
-                                source={images.teh_c_peng } 
+                                source={icons.instagram} 
+                                resizeMode="contain"
                                 style={{
-                                    width: "30%",
-                                    height: 100
-                                }} 
-                            />
-                        )}
+                                    width: 25,
+                                    height: 25,
+                                    marginRight: 5
+                                }}/>
+                            <Text>Post</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[styles.menuItem, mode == 'Image' ? styles.menuItemActive : '']}
+                            onPress={() => changeMode('Image')}
+                        >
+                            <Image 
+                                source={icons.image} 
+                                resizeMode="contain"
+                                style={{
+                                    width: 25,
+                                    height: 25,
+                                    marginRight: 5
+                                }}/>
+                            <Text>Image</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[styles.menuItem, mode == 'User' ? styles.menuItemActive : '']}
+                            onPress={() => changeMode('User')}
+                        >
+                            <Image 
+                                source={icons.user} 
+                                resizeMode="contain"
+                                style={{
+                                    width: 25,
+                                    height: 25,
+                                    marginRight: 5
+                                }}/>
+                            <Text>User</Text>
+                        </TouchableOpacity>
                     </View>
-                </KeyboardAwareScrollView>
+                    
+                </View>
             </View>
+
+            <View style={{marginTop: 10, backgroundColor: COLORS.lightGray4, flex: 1}}>
+                {/* POST */}
+                {
+                    mode == 'Post' &&
+                    <Posts navigation={navigation}/>
+                }
+
+                {/* Image */}
+                {
+                    mode == 'Image' &&
+                    <KeyboardAwareScrollView>
+                        <View style={{display: 'flex',flexDirection: 'row', width: '100%', marginLeft: '2%', marginTop: 15}}>
+                            {[1,2,3].map(img => 
+                                <Image 
+                                    key={img}
+                                    source={images.teh_c_peng } 
+                                    style={{
+                                        width: "30%",
+                                        height: 100,
+                                        marginHorizontal: '1%',
+                                        borderRadius: 20
+                                    }} 
+                                />
+                            )}
+                        </View>
+                    </KeyboardAwareScrollView>
+                }
+            </View>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={mode == 'User'}
+                onRequestClose={() => {
+                    setModal(!modal)
+                }}
+            >
+                <View style={styles.modalView}>
+                    <View style={{backgroundColor: COLORS.white,}}>
+                        
+                        <View 
+                            style={styles.menu}
+                        >
+                            <View style={{flexDirection:'row'}}>
+                                <TouchableOpacity
+                                    style={[styles.menuItem, mode == 'Post' ? styles.menuItemActive : '']}
+                                    onPress={() => changeMode('Post')}
+                                >
+                                    <Image 
+                                        source={icons.instagram} 
+                                        resizeMode="contain"
+                                        style={{
+                                            width: 25,
+                                            height: 25,
+                                            marginRight: 5
+                                        }}/>
+                                    <Text>Post</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={[styles.menuItem, mode == 'Image' ? styles.menuItemActive : '']}
+                                    onPress={() => changeMode('Image')}
+                                >
+                                    <Image 
+                                        source={icons.image} 
+                                        resizeMode="contain"
+                                        style={{
+                                            width: 25,
+                                            height: 25,
+                                            marginRight: 5
+                                        }}/>
+                                    <Text>Image</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={[styles.menuItem, mode == 'User' ? styles.menuItemActive : '']}
+                                    onPress={() => changeMode('User')}
+                                >
+                                    <Image 
+                                        source={icons.user} 
+                                        resizeMode="contain"
+                                        style={{
+                                            width: 25,
+                                            height: 25,
+                                            marginRight: 5
+                                        }}
+                                    />
+                                    <Text>User</Text>
+                                </TouchableOpacity>
+                            </View>
+                            
+                        </View>
+
+                        <EditProfile/>
+
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     )
 }
@@ -115,6 +259,7 @@ const styles = StyleSheet.create({
     container: {
         marginTop: 20,
         paddingHorizontal: 20,
+        backgroundColor: COLORS.lightGray4
     },
     avatar: {
         width: 70,
@@ -125,7 +270,7 @@ const styles = StyleSheet.create({
     },
     bgImage: {
         width: "100%",
-        height: 180,
+        height: 120,
         borderRadius: 10
     },
     name: {
@@ -133,8 +278,43 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     description: {
-        ...FONTS.body3,
+        ...FONTS.body4,
         marginTop: 10,
         color: '#767676'
-    }
+    }, 
+    menu: {
+        alignItems: 'center', 
+        paddingVertical: 10, 
+        width: '100%', 
+        borderBottomColor: '#F0F0F0',
+        borderBottomWidth: 2,
+    },
+    menuItem: {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        paddingHorizontal: 10, 
+    },
+    menuItemActive: {
+        borderBottomColor: COLORS.primary, 
+        borderBottomWidth: 2,
+        paddingBottom: 10
+    },
+    modalView: {
+        backgroundColor: COLORS.lightGray,
+        paddingHorizontal: 10,
+        paddingVertical: 15,
+        color: COLORS.black,
+        borderRadius: 20,
+        shadowColor: COLORS.secondary,
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        bottom: 0,
+        position: 'absolute',
+        width: '100%',
+    },
 })

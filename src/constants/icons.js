@@ -24,6 +24,8 @@ export const star = require("../../assets/icons/star.png");
 export const sushi = require("../../assets/icons/sushi.png");
 export const user = require("../../assets/icons/user.png");
 export const plus = require("../../assets/icons/plus.png");
+export const instagram = require("../../assets/icons/instagram.png");
+export const image = require("../../assets/icons/image.png");
 
 export default {
     back,
@@ -52,4 +54,6 @@ export default {
     sushi,
     user,
     plus,
+    instagram,
+    image
 }
