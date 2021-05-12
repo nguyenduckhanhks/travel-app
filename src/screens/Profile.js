@@ -94,11 +94,11 @@ const Profile = ({navigation}) => {
                 />
 
                 {/* name */}
-                <Text style={styles.name}>{userData['name']}</Text>
+                <Text style={styles.name}>{userData ? userData['name'] : ''}</Text>
                 
                 {/* mô tả */}
                 <Text style={styles.description}>
-                    {userData['description']}
+                    {userData ? userData['description'] : ''}
                 </Text>
                 
                 {/* Location Address */}
@@ -117,7 +117,7 @@ const Profile = ({navigation}) => {
                             marginRight: 10
                         }}
                     />
-                    <Text style={{...FONTS.body4}}>{userData['address']}</Text>
+                    <Text style={{...FONTS.body4}}>{userData ? userData['address'] : ''}</Text>
                 </View>
 
                 {/* Menu */}
@@ -267,7 +267,10 @@ const Profile = ({navigation}) => {
                             
                         </View>
 
-                        <EditProfile/>
+                        <EditProfile
+                            userData={userData}
+                            getData={getData}
+                        />
 
                     </View>
                 </View>

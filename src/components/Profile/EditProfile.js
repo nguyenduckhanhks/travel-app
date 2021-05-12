@@ -4,26 +4,52 @@ import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaVi
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DatePicker from '../DatePicker';
-import { RadioButton } from 'react-native-paper';
 import { COLORS, icons, FONTS } from '../../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as firebase from 'firebase';
 
-const Profile = ({navigation, route}) => {
+const Profile = ({navigation, userData, getData}) => {
     const [uidLogin, setUidLogin] = useState('')
 
-    const [uid, setUid] = useState('')
-    const [photo, setPhoto] = useState('')
     const [birthday, setBirthday] = useState(new Date(Date.now()))
-    const [gender, setGender] = useState('male')
     const [email, setEmail] = useState('')
     const [tel, setTel] = useState('')
     const [name, setName] = useState('')
     const [address, setAddress] = useState('')
+    const [description, setDescription] = useState('')
 
     const [isEdit, setIsEdit] = useState(false)
-    const [type, setType] = useState('account')
-    const [statusFriend, setStatusFriend] = useState('none')
-    const [idRequest, setIdRequest] = useState('none')
+
+    useEffect(() => {
+        if(!userData) return;
+        setUidLogin(userData['id'])
+        setName(userData['name'])
+        setBirthday(userData['birthday'] ? new Date(userData['birthday']['seconds'] * 1000) : new Date(Date.now()))
+        setEmail(userData['email'])
+        setAddress(userData['address'])
+        setDescription(userData['description'])
+    }, [userData])
+
+    const updateProfile = () => {
+        if(!uidLogin) return Alert.alert('Không tìm thấy thông tin người dùng!')
+
+        let dataSend = {
+            tel: tel,
+            address: address,
+            description: description
+        }
+        if(birthday) dataSend['birthday'] = new Date(birthday)
+        if(dataSend) {
+            firebase.firestore()
+                    .collection('users')
+                    .doc(uidLogin)
+                    .update(dataSend)
+                    .then(async () => {
+                        await getData()
+                        setIsEdit(false)
+                    })
+        }
+    }
     
     return (
         <LinearGradient
@@ -33,152 +59,121 @@ const Profile = ({navigation, route}) => {
             <Text style={{
                 fontSize: 35,
                 textAlign: 'center',
-                paddingTop: 20,
+                paddingTop: 22,
             }}>{name}</Text>
 
-            <ScrollView showsVerticalScrollIndicator={false} style={{backgroundColor: COLORS.lightGray}}>
-                <KeyboardAwareScrollView>
-                    <View>
-                        <DatePicker 
-                            model={birthday} 
-                            setDate={setBirthday} 
-                            label='Ngày sinh:' 
-                            disabled={!isEdit}
+            <KeyboardAwareScrollView>
+                <View style={styles.nomalField}>
+                    <Text style={styles.title}> Email:</Text>
+                    <View style={styles.backgroundInput}>
+                        <TextInput 
+                            placeholder='Email'
+                            placeholderTextColor={COLORS.darkgray}
+                            style={styles.input}
+                            value={email}
+                            onChangeText={setEmail}
+                            editable={false}
                         />
                     </View>
+                </View>
 
-                    <View style={styles.nomalField}>
-                        <Text style={styles.title}> Giới tính:</Text>
-                        <View style={{
-                            flex: 1,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            paddingLeft: 10,
-                            backgroundColor: COLORS.white
-                        }}>
-                            <RadioButton 
-                                value="male"
-                                status={ gender === 'male' ? 'checked' : 'unchecked'}
-                                onPress={() => setGender('male')}
-                                color="#f20045"
-                                disabled={!isEdit}
-                            /><Text style={{marginRight: 30}}>Nam</Text>
-                            <RadioButton 
-                                value="female"
-                                status={ gender === 'female' ? 'checked' : 'unchecked'}
-                                onPress={() => setGender('female')}
-                                color="#f20045"
-                                disabled={!isEdit}
-                            /><Text>Nữ</Text>
-                        </View>
+                <View>
+                    <DatePicker 
+                        model={birthday} 
+                        setDate={setBirthday} 
+                        label='Ngày sinh:' 
+                        disabled={!isEdit}
+                    />
+                </View>
+
+                <View style={styles.nomalField}>
+                    <Text style={styles.title}> Số điện thoại:</Text>
+                    <View style={styles.backgroundInput}>
+                        <TextInput 
+                            placeholder='Số điện thoại'
+                            placeholderTextColor={COLORS.darkgray}
+                            style={styles.input}
+                            value={tel}
+                            onChangeText={setTel}
+                            editable={isEdit}
+                        />
                     </View>
+                </View>
 
-                    <View style={styles.nomalField}>
-                        <Text style={styles.title}> Số điện thoại:</Text>
-                        <View style={styles.backgroundInput}>
-                            <TextInput 
-                                placeholder='Số điện thoại'
-                                placeholderTextColor={COLORS.darkgray}
-                                style={{
-                                    fontSize: 16,
-                                }}
-                                value={tel}
-                                onChangeText={setTel}
-                                editable={isEdit}
-                            />
-                        </View>
+                <View style={styles.nomalField}>
+                    <Text style={styles.title}> Địa chỉ:</Text>
+                    <View style={styles.backgroundInput}>
+                        <TextInput 
+                            placeholder='Địa chỉ'
+                            placeholderTextColor={COLORS.darkgray}
+                            style={styles.input}
+                            value={address}
+                            onChangeText={setAddress}
+                            editable={isEdit}
+                        />
                     </View>
+                </View>
 
-                    <View style={styles.nomalField}>
-                        <Text style={styles.title}> Email:</Text>
-                        <View style={styles.backgroundInput}>
-                            <TextInput 
-                                placeholder='Email'
-                                placeholderTextColor={COLORS.darkgray}
-                                style={{
-                                    fontSize: 16,
-                                }}
-                                value={email}
-                                onChangeText={setEmail}
-                                editable={isEdit}
-                            />
-                        </View>
+                <View style={[styles.nomalField, {height: 80}]}>
+                    <View style={[styles.backgroundInput, {height: 60}]}>
+                        <TextInput 
+                            placeholder='Mô tả'
+                            multiline={true}
+                            numberOfLines={4}
+                            placeholderTextColor={COLORS.darkgray}
+                            style={[styles.input]}
+                            value={description}
+                            onChangeText={setDescription}
+                            editable={isEdit}
+                        />
                     </View>
+                </View>
 
-                    <View style={styles.nomalField}>
-                        <Text style={styles.title}> Địa chỉ:</Text>
-                        <View style={styles.backgroundInput}>
-                            <TextInput 
-                                placeholder='Địa chỉ'
-                                placeholderTextColor={COLORS.darkgray}
-                                style={{
-                                    fontSize: 16,
-                                    color: COLORS.darkgray
-                                }}
-                                value={address}
-                                onChangeText={setAddress}
-                                editable={isEdit}
-                            />
-                        </View>
-                    </View>
+                {
+                    !isEdit &&
+                    <TouchableOpacity 
+                        style={styles.button} 
+                        onPress={() => {
+                            setIsEdit(true)
+                        }}
+                    >
+                        <LinearGradient colors={[COLORS.primary, COLORS.primary, COLORS.primary]} style={styles.gradient}>
+                            <Text style={styles.text}>
+                                    Chỉnh sửa</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                }
 
-                    {
-                        !isEdit &&
-                        <TouchableOpacity 
-                            style={styles.button} 
-                            onPress={() => {
-                                setIsEdit(true)
-                            }}
-                        >
-                            <LinearGradient colors={[COLORS.primary, COLORS.primary, COLORS.primary]} style={styles.gradient}>
-                                <Text style={styles.text}>
-                                        Chỉnh sửa</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
-                    }
+                <View style={{flexDirection: 'row'}}>
+                {
+                    isEdit &&
+                    <TouchableOpacity 
+                        style={[styles.button1, {marginLeft: '10%'}]} 
+                        onPress={() => updateProfile()}
+                    >
+                        <LinearGradient colors={[COLORS.primary, COLORS.primary, COLORS.primary]} style={styles.gradient}>
+                            <Text style={styles.text}>
+                                    Lưu</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                }
 
-                    <View style={{flexDirection: 'row'}}>
-                    {
-                        isEdit &&
-                        <TouchableOpacity 
-                            style={[styles.button1, {marginLeft: '10%'}]} 
-                            onPress={() => updateProfile()}
-                        >
-                            <LinearGradient colors={[COLORS.primary, COLORS.primary, COLORS.primary]} style={styles.gradient}>
-                                <Text style={styles.text}>
-                                        Lưu</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
-                    }
-
-                    {
-                        isEdit &&
-                        <TouchableOpacity 
-                            style={[styles.button1, {marginLeft: '10%'}]} 
-                            onPress={() => {
-                                setIsEdit(false)
-                            }}
-                        >
-                            <LinearGradient colors={[COLORS.darkgray, COLORS.darkgray]} style={styles.gradient}>
-                                <Text style={styles.text}>
-                                        Hủy</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
-                    }
-                    </View>
-                    {
-                        !isEdit && type === 'myProfile' &&
-                        <View style={{...FONTS.body4, marginTop: 10, alignItems: 'center'}}>
-                            <Text 
-                                style={{fontSize: 17, color: COLORS.primary}}
-                                onPress={() => Signout()}
-                            >
-                                Đăng xuất
-                            </Text>
-                        </View>
-                    }
-                </KeyboardAwareScrollView>
-            </ScrollView>
+                {
+                    isEdit &&
+                    <TouchableOpacity 
+                        style={[styles.button1, {marginLeft: '10%'}]} 
+                        onPress={() => {
+                            setIsEdit(false)
+                        }}
+                    >
+                        <LinearGradient colors={[COLORS.darkgray, COLORS.darkgray]} style={styles.gradient}>
+                            <Text style={styles.text}>
+                                    Hủy</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                }
+                </View>
+            </KeyboardAwareScrollView>
 
         </LinearGradient>
     ) 
@@ -240,5 +235,10 @@ const styles = StyleSheet.create({
     text: {
         color: COLORS.white,
         fontSize: 20,
+    },
+    input: {
+        fontSize: 16,
+        color: COLORS.darkgray,
+        width: '100%'   
     }
 })
