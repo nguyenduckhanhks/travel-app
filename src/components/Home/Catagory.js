@@ -1,63 +1,38 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import {FONTS, SIZES, icons, COLORS} from '../../constants';
+import * as firebase from 'firebase';
 
-const categoryData = [
-    {
-        id: 1,
-        name: "Rice",
-        icon: icons.rice_bowl,
-    },
-    {
-        id: 2,
-        name: "Noodles",
-        icon: icons.noodle,
-    },
-    {
-        id: 3,
-        name: "Hot Dogs",
-        icon: icons.hotdog,
-    },
-    {
-        id: 4,
-        name: "Salads",
-        icon: icons.salad,
-    },
-    {
-        id: 5,
-        name: "Burgers",
-        icon: icons.hamburger,
-    },
-    {
-        id: 6,
-        name: "Pizza",
-        icon: icons.pizza,
-    },
-    {
-        id: 7,
-        name: "Snacks",
-        icon: icons.fries,
-    },
-    {
-        id: 8,
-        name: "Sushi",
-        icon: icons.sushi,
-    },
-    {
-        id: 9,
-        name: "Desserts",
-        icon: icons.donut,
-    },
-    {
-        id: 10,
-        name: "Drinks",
-        icon: icons.drink,
-    },
+const Catagory = ({setSelectedCategory, selectedCategory}) => {
+    const [uidLogin, setUidLogin] = useState('')
+    const [listCatagories, setListCatagories] = useState([])
 
-]
+    useEffect(() => {
+        firebase.auth().onAuthStateChanged(user => {
+            if(!user) return navigation.navigate('Login')
+            let uidLogin = user['uid']
+            setUidLogin(uidLogin)
+        })
+        getListcata()
+    },[uidLogin])
 
-const Catagory = (props) => {
-    const [selectedCategory, setSelectedCategory] = useState(categoryData[0])
+    const getListcata = () => {
+        firebase.firestore()
+                .collection('catagories')
+                .onSnapshot(snaps => {
+                    let tmpList = snaps.docs.map(doc => {
+                        return doc.data()
+                    })
+                    setListCatagories([
+                        {
+                            id: 'all',
+                            name: 'Tất cả',
+                            image: icons.world
+                        },
+                        ...tmpList
+                    ])
+                })
+    }
 
     const onSelectCategory = (value) => {
         setSelectedCategory(value)
@@ -69,14 +44,15 @@ const Catagory = (props) => {
                 style={{
                     padding: SIZES.padding,
                     paddingBottom: SIZES.padding * 2,
-                    backgroundColor: (selectedCategory?.id == item.id) ? COLORS.primary : COLORS.white,
+                    backgroundColor: (selectedCategory == item.id) ? COLORS.primary : COLORS.white,
                     borderRadius: SIZES.radius,
                     alignItems: "center",
                     justifyContent: "center",
                     marginRight: SIZES.padding,
-                    ...styles.shadow
+                    ...styles.shadow,
+                    width: 75
                 }}
-                onPress={() => onSelectCategory(item)}
+                onPress={() => onSelectCategory(item.id)}
             >
                 <View
                     style={{
@@ -89,7 +65,7 @@ const Catagory = (props) => {
                     }}
                 >
                     <Image
-                        source={item.icon}
+                        source={item.id == 'all' ? item.image : {uri: item.image}}
                         resizeMode="contain"
                         style={{
                             width: 30,
@@ -101,6 +77,7 @@ const Catagory = (props) => {
                 <Text
                     style={{
                         marginTop: SIZES.padding,
+                        textAlign: 'center',
                         color: (selectedCategory?.id == item.id) ? COLORS.white : COLORS.black,
                         ...FONTS.body5
                     }}
@@ -117,7 +94,7 @@ const Catagory = (props) => {
             <Text style={{ ...FONTS.h1 }}>Categories</Text>
 
             <FlatList
-                data={categoryData}
+                data={listCatagories}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={item => `${item.id}`}
