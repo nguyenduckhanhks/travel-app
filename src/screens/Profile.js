@@ -12,6 +12,7 @@ import * as ImagePicker from 'expo-image-picker';
 const Profile = ({navigation}) => {
     const [uidLogin, setUidLogin] = useState('')
     const [userData, setUserData] = useState(null)
+    const [listimages, setListImages] = useState([])
 
     const [mode, setMode] = useState(['Post'])
     const [editProfileImg, setEditProfileImg] = useState(false)
@@ -36,6 +37,14 @@ const Profile = ({navigation}) => {
                 .doc(uidLogin)
                 .onSnapshot(doc => {
                     setUserData(doc.data())
+                })
+        firebase.firestore()
+                .collection('images')
+                .where('userId', '==', uidLogin)
+                .onSnapshot(snap => {
+                    if(snap.docs.length > 0) {
+                        setListImages(snap.docs[0].data()['images'])
+                    }
                 })
     }
 
@@ -295,25 +304,35 @@ const Profile = ({navigation}) => {
                 }
 
                 {/* Image */}
+                <KeyboardAwareScrollView>
                 {
                     mode == 'Image' &&
-                    <KeyboardAwareScrollView>
-                        <View style={{display: 'flex',flexDirection: 'row', width: '100%', marginLeft: '2%', marginTop: 15}}>
-                            {[1,2,3].map(img => 
-                                <Image 
-                                    key={img}
-                                    source={images.teh_c_peng } 
-                                    style={{
-                                        width: "30%",
-                                        height: 100,
-                                        marginHorizontal: '1%',
-                                        borderRadius: 20
-                                    }} 
-                                />
-                            )}
-                        </View>
-                    </KeyboardAwareScrollView>
+                    listimages.map((image, index, arr) => {
+                        if(index % 3 === 0) {
+                            let tmpImage = arr.slice(index, index + 3)
+                            return (
+                                <View 
+                                    style={{display: 'flex',flexDirection: 'row', width: '100%', marginLeft: '2%', marginTop: 15}}
+                                    key={index}
+                                >
+                                    {tmpImage.map(img => 
+                                        <Image 
+                                            key={img}
+                                            source={{uri: img}} 
+                                            style={{
+                                                width: "30%",
+                                                height: 100,
+                                                marginHorizontal: '1%',
+                                                borderRadius: 20
+                                            }} 
+                                        />
+                                    )}
+                                </View>
+                            )
+                        }
+                    })
                 }
+                </KeyboardAwareScrollView>
             </View>
 
             {/* Modal Profile info */}
