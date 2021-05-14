@@ -1,16 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import { View, TextInput, SafeAreaView, Text, TouchableOpacity, Image, StyleSheet, Modal } from 'react-native';
+import { View, TextInput, SafeAreaView, Text, TouchableOpacity, Image, StyleSheet, Modal, Alert } from 'react-native';
 import {COLORS, icons, SIZES, FONTS, images} from '../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Posts from '../components/Home/Posts';
 import EditProfile from '../components/Profile/EditProfile';
-import * as firebase from 'firebase'
+import * as firebase from 'firebase';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as ImagePicker from 'expo-image-picker';
 
 const Profile = ({navigation}) => {
     const [uidLogin, setUidLogin] = useState('')
     const [userData, setUserData] = useState(null)
 
     const [mode, setMode] = useState(['Post'])
+    const [editProfileImg, setEditProfileImg] = useState(false)
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged(user => {
@@ -33,6 +37,101 @@ const Profile = ({navigation}) => {
                 .onSnapshot(doc => {
                     setUserData(doc.data())
                 })
+    }
+
+    const setAvatarFromLocal = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+
+        if (!result.cancelled) {
+            uploadImage(result.uri, 'IMG_' + Date.now(), updateAvatar, saveImageInfo)
+            .then(() => {
+                setEditProfileImg(false)
+                getData()
+            })
+            .catch(err => {
+                Alert.alert(err)
+            })
+        }
+    };
+
+    const setBgImageFromLocal = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          quality: 1,
+        });
+
+        if (!result.cancelled) {
+            uploadImage(result.uri, 'IMG_' + Date.now(), updateBgImage, saveImageInfo)
+            .then(() => {
+                setEditProfileImg(false)
+                getData()
+            })
+            .catch(err => {
+                Alert.alert(err)
+            })
+        }
+    };
+
+    const updateAvatar = (uri) => {
+        if(!uidLogin) return
+        firebase.firestore()
+                .collection('users')
+                .doc(uidLogin)
+                .update({
+                    avatar: uri
+                })
+    }
+
+    const updateBgImage = (uri) => {
+        if(!uidLogin) return
+        firebase.firestore()
+                .collection('users')
+                .doc(uidLogin)
+                .update({
+                    bgImage: uri
+                })
+    }
+
+    const saveImageInfo = (uri) => {
+        if(!uidLogin) return;
+        firebase.firestore()
+                .collection('images')
+                .where('userId', '==', uidLogin)
+                .onSnapshot(snap => {
+                    if(snap.docs.length > 0) {
+                        if(snap.docs[0].data()['images'].indexOf(uri) < 0) {
+                            firebase.firestore().collection('images').doc(snap.docs[0].id)
+                                .update({
+                                    images: [uri, ...snap.docs[0].data()['images']]
+                                })
+                        }
+                    } else {
+                        firebase.firestore().collection('images')
+                                .add({
+                                    userId: uidLogin,
+                                    images: [uri]
+                                })
+                    }
+                })
+    }
+
+    const uploadImage = async(uri, imageName, handelURL, handelURL2) => {
+        const response = await fetch(uri);
+        const blob  = await response.blob();
+
+        let ref = firebase.storage().ref().child("images/" + imageName);
+        return ref.put(blob).then(snapshot => {
+            snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                handelURL(downloadURL)
+                handelURL2(downloadURL)
+            });
+        })
     }
 
     return (
@@ -83,18 +182,32 @@ const Profile = ({navigation}) => {
             <View style={styles.container}>
                 {/* ảnh bìa */}
                 <Image 
-                    source={images.pizza_restaurant } 
+                    source={userData && userData['bgImage'] ? {uri: userData['bgImage']} : images.image_blank} 
                     style={styles.bgImage} 
                 />
                 
                 {/* avatar  */}
                 <Image 
-                    source={images.teh_c_peng } 
+                    source={userData && userData['avatar'] ? {uri: userData['avatar']} : images.avatar_1 } 
                     style={styles.avatar} 
                 />
 
                 {/* name */}
-                <Text style={styles.name}>{userData ? userData['name'] : ''}</Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={styles.name}>{userData ? userData['name'] : ''}</Text>
+
+                    {/* Edit Avatar and BgImage */}
+                    <TouchableOpacity 
+                        style={{marginLeft: 10}} 
+                        onPress={() => setEditProfileImg(true)}
+                    >
+                        <LinearGradient 
+                            colors={[COLORS.primary, COLORS.primary]} 
+                            style={{width: 20, height: 20,borderRadius: 10, alignItems: 'center', justifyContent: 'center'}}>
+                            <Icon style={{}} name="pencil-outline" size={14} color="#fff"/>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </View>
                 
                 {/* mô tả */}
                 <Text style={styles.description}>
@@ -203,6 +316,7 @@ const Profile = ({navigation}) => {
                 }
             </View>
 
+            {/* Modal Profile info */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -275,6 +389,33 @@ const Profile = ({navigation}) => {
                     </View>
                 </View>
             </Modal>
+
+            {/* Modal edit avatar and bgimage */}
+            {
+                editProfileImg && 
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={editProfileImg}
+                    onRequestClose={() => {
+                        setEditProfileImg(!editProfileImg)
+                    }}
+                >
+                    <View style={styles.modalView}>
+                        <View style={{backgroundColor: COLORS.white,}}>
+                            <TouchableOpacity style={[styles.menu, styles.border]} onPress={() => setAvatarFromLocal()}>
+                                <Text style={{...FONTS.body3, textAlign: 'center'}}>Chỉnh sửa ảnh đại diện</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.menu, styles.border]} onPress={() => setBgImageFromLocal()}>
+                                <Text style={{...FONTS.body3, textAlign: 'center'}}>Chỉnh sửa ảnh bìa</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.menu]} onPress={() => setEditProfileImg(false)}>
+                                <Text style={{...FONTS.body3, textAlign: 'center'}}>Hủy</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            }
         </SafeAreaView>
     )
 }
@@ -342,5 +483,9 @@ const styles = StyleSheet.create({
         bottom: 0,
         position: 'absolute',
         width: '100%',
+    },
+    border: {  
+        borderBottomColor: COLORS.lightGray,
+        borderBottomWidth: 1
     },
 })
