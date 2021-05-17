@@ -104,7 +104,8 @@ const NewPost = ({navigation}) => {
                     catagory: listCatagories[catagory],
                     description: description,
                     countLike: 0,
-                    rate: 5
+                    rate: 5,
+                    auth: uidLogin
                 }
         
                 firebase.firestore()

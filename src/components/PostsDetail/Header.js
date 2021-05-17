@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
 import { COLORS, FONTS, SIZES, icons } from '../../constants';
 
-const Header = ({navigation}) => {
+const Header = ({navigation, postDataName}) => {
     return (
         <View style={{ flexDirection: 'row' }}>
             <TouchableOpacity
@@ -41,7 +41,7 @@ const Header = ({navigation}) => {
                         backgroundColor: COLORS.lightGray3
                     }}
                 >
-                    <Text style={{ ...FONTS.h3 }}>POST NAME</Text>
+                    <Text style={{ ...FONTS.h3 }}>{postDataName}</Text>
                 </View>
             </View>
 

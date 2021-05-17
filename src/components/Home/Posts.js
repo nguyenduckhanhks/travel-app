@@ -4,7 +4,7 @@ import * as firebase from 'firebase';
 import { SIZES, COLORS, FONTS, icons } from '../../constants';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const Posts = ({navigation, listPost, setListPost}) => {
+const Posts = ({navigation, listPost, setListPost, isMyPost=false}) => {
     const [uidLogin, setUidLogin] = useState('')
 
     useEffect(() => {
@@ -17,14 +17,34 @@ const Posts = ({navigation, listPost, setListPost}) => {
     }, [uidLogin])
 
     const getAllListPost = () => {
-        firebase.firestore()
+        if(!uidLogin) return
+        if(isMyPost) {
+            firebase.firestore()
                 .collection('places')
+                .where('auth', '==', uidLogin)
                 .onSnapshot(snaps => {
                     let tmpList = snaps.docs.map(doc => {
-                        return doc.data()
+                        return {
+                            idDoc: doc.id,
+                            ...doc.data()
+                        }
                     })
                     setListPost(tmpList)
                 })
+        }
+        if(!isMyPost) {
+            firebase.firestore()
+                .collection('places')
+                .onSnapshot(snaps => {
+                    let tmpList = snaps.docs.map(doc => {
+                        return {
+                            idDoc: doc.id,
+                            ...doc.data()
+                        }
+                    })
+                    setListPost(tmpList)
+                })
+        }
     }
 
     const renderItem = ({ item }) => (

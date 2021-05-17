@@ -1,32 +1,85 @@
 import React from 'react';
-import { Animated, View, Image, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { SIZES, COLORS, FONTS, icons } from '../../constants'
+import { Animated, View, Image, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import { SIZES, COLORS, FONTS, icons, images } from '../../constants';
+import Icon from 'react-native-vector-icons/Ionicons';
+import * as firebase from 'firebase';
 
-const PostInfo = ({postData}) => {
+const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike}) => {
     const scrollX = new Animated.Value(0);
+
+    const onLike = () => {
+        firebase.firestore()
+                .collection('likes')
+                .where('uid', '==', uidLogin)
+                .get()
+                .then(querySnapshot => {
+                    let isNew = true
+                    querySnapshot.forEach((doc) => {
+                        if(doc.data()['uid'] == uidLogin){
+                            isNew = false
+                            return toogleLikeAPost(doc.id)
+                        }
+                    });
+                    if(isNew) {
+                        return toogleLikeAPost()
+                    }
+                })
+    }
+
+    const toogleLikeAPost = (docId) => {
+        let refLike = firebase.firestore().collection('likes').doc(docId)
+        let refPost = firebase.firestore().collection('places').doc(postData['idDoc'])
+
+        firebase.firestore().runTransaction(async transaction => {
+            const likeDoc = await transaction.get(refLike)
+            const postDoc = await transaction.get(refPost)
+
+            if(!postDoc.exists) return Alert.alert('Địa điểm không tồn tại!')
+
+            if (!likeDoc.exists) {
+                transaction.set(refLike, { uid: uidLogin, listPost: [postData['id']] });
+                transaction.update(refPost, {
+                    countLike: 1
+                })
+                setIsLike(true)
+                return Promise.resolve();
+            }
+
+            let countLike = postDoc.data()['countLike']
+            const caculateLike = isLike ? countLike - 1 : countLike + 1
+            // console.log(caculateLike)
+            transaction.update(refLike, {
+                listPost: isLike ? 
+                        firebase.firestore.FieldValue.arrayRemove(postData['id']) :
+                        firebase.firestore.FieldValue.arrayUnion(postData['id'])
+            })
+            transaction.update(refPost, {
+                countLike: caculateLike < 0 ? 0 : caculateLike
+            })
+            setIsLike(!isLike)
+            return Promise.resolve();
+        })
+        .catch(err => {
+            Alert.alert(err)
+        })
+        // firebase.firestore()
+        //         .collection('likes')
+        //         .doc(docId)
+        //         .update(
+        //             {
+        //                 listPost: isLike ? 
+        //                           firebase.firestore.FieldValue.arrayRemove(postData['id']) :
+        //                           firebase.firestore.FieldValue.arrayUnion(postData['id'])
+        //             }
+        //         )
+    }
+
     return (
         <View
             style={{
                 paddingHorizontal: 20
             }}
         >
-            <View
-                style={{
-                    marginBottom: 3 * SIZES.padding,
-                    paddingTop: 50
-                }}
-            >
-                <Image
-                    source={postData && postData.image ? {uri: postData.image} : icons.image}
-                    resizeMode="cover"
-                    style={{
-                        width: "100%",
-                        height: 200,
-                        borderRadius: SIZES.radius
-                    }}
-                />
-            </View>
 
             <Animated.ScrollView
                 vertical
@@ -38,8 +91,44 @@ const PostInfo = ({postData}) => {
                     { nativeEvent: { contentOffset: { x: scrollX } } }
                 ], { useNativeDriver: false })}
             >
-                {/* Name */}
-                <Text style={{ ...FONTS.h3 }}>{postData.name}</Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Image 
+                        source={authData && authData['avatar'] ? {uri: authData['avatar']} : images.avatar_1 } 
+                        style={styles.avatar} 
+                    />
+                    <Text style={{...FONTS.h2}}>{authData ? authData['name'] : ''}</Text>
+                </View>
+
+                {/* Description */}
+                <Text style={{marginTop: 20, color: '#767676'}}>
+                    {postData['description']}
+                </Text>
+
+                {/* Image */}
+                <View
+                    style={{
+                        marginBottom: 3 * SIZES.padding,
+                        paddingTop: 20
+                    }}
+                >
+                    <Image
+                        source={postData && postData.image ? {uri: postData.image} : icons.image}
+                        resizeMode="cover"
+                        style={{
+                            width: "100%",
+                            height: 200,
+                            borderRadius: SIZES.radius
+                        }}
+                    />
+                </View>
+
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    {/* Name */}
+                    <Text style={{ ...FONTS.h3 }}>{postData.name}</Text>
+                    <TouchableOpacity style={{marginLeft: 10}}>
+                        <Icon name="navigate" size={30} color={COLORS.primary}/>
+                    </TouchableOpacity>
+                </View>
 
                 {/* Location Address */}
                 <View
@@ -67,11 +156,21 @@ const PostInfo = ({postData}) => {
                     </Text>
                 </View>
 
-                {/* Description */}
-                <Text style={{...FONTS.h2}}>Description</Text>
-                <Text style={{marginTop: 20, color: '#767676'}}>
-                    {postData['description']}
-                </Text>
+                {/* menu bar */}
+                <View style={styles.menuBar}>
+                    <TouchableOpacity style={styles.menuButton} onPress={() => onLike()}>
+                        <Icon style={{marginRight: 5}} name={isLike ? "heart" : 'heart-outline'} size={20} color={COLORS.primary}/>
+                        <Text>Thích</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.menuButton}>
+                        <Icon style={{marginRight: 5}} name="star-outline" size={20} color={COLORS.primary}/>
+                        <Text>Đánh giá</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.menuButton}>
+                        <Icon style={{marginRight: 5}} name="chatbox-ellipses-outline" size={20} color={COLORS.primary}/>
+                        <Text>Bình luận</Text>
+                    </TouchableOpacity>
+                </View>
             </Animated.ScrollView>
         </View>
     )
@@ -110,5 +209,25 @@ const styles = StyleSheet.create({
     text: {
         ...FONTS.body4,
         color: 'white',
-    }
+    },
+    menuBar: {
+        flexDirection: 'row',
+        borderBottomColor: COLORS.darkgray,
+        borderBottomWidth: 1,
+        borderTopColor: COLORS.darkgray,
+        borderTopWidth: 1,
+        paddingVertical: 10
+    },
+    menuButton: {
+        flexDirection: 'row', 
+        alignItems: 'center',
+        width: '33%',
+        paddingHorizontal: 10,
+    },
+    avatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 40,
+        marginRight: 20
+    },
 })
