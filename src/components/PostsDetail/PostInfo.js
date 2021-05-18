@@ -1,11 +1,10 @@
 import React from 'react';
-import { Animated, View, Image, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import { Animated, View, Image, Text, StyleSheet, TouchableOpacity, Alert, ScrollView} from 'react-native';
 import { SIZES, COLORS, FONTS, icons, images } from '../../constants';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as firebase from 'firebase';
 
-const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike}) => {
-    const scrollX = new Animated.Value(0);
+const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike, listCmt, onOpenCmt}) => {
 
     const onLike = () => {
         firebase.firestore()
@@ -62,16 +61,6 @@ const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike}) => {
         .catch(err => {
             Alert.alert(err)
         })
-        // firebase.firestore()
-        //         .collection('likes')
-        //         .doc(docId)
-        //         .update(
-        //             {
-        //                 listPost: isLike ? 
-        //                           firebase.firestore.FieldValue.arrayRemove(postData['id']) :
-        //                           firebase.firestore.FieldValue.arrayUnion(postData['id'])
-        //             }
-        //         )
     }
 
     return (
@@ -81,15 +70,8 @@ const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike}) => {
             }}
         >
 
-            <Animated.ScrollView
-                vertical
-                pagingEnabled
-                scrollEventThrottle={16}
-                snapToAlignment="center"
+            <ScrollView
                 showsVerticalScrollIndicator={false}
-                onScroll={Animated.event([
-                    { nativeEvent: { contentOffset: { x: scrollX } } }
-                ], { useNativeDriver: false })}
             >
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Image 
@@ -166,12 +148,35 @@ const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike}) => {
                         <Icon style={{marginRight: 5}} name="star-outline" size={20} color={COLORS.primary}/>
                         <Text>Đánh giá</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.menuButton}>
+                    <TouchableOpacity style={styles.menuButton} onPress={() => onOpenCmt()}>
                         <Icon style={{marginRight: 5}} name="chatbox-ellipses-outline" size={20} color={COLORS.primary}/>
                         <Text>Bình luận</Text>
                     </TouchableOpacity>
                 </View>
-            </Animated.ScrollView>
+
+                <View style={{marginTop: 10, marginBottom: 50}}>
+                    {
+                        listCmt.map(cmt => 
+                            <View
+                                key={cmt['id']}
+                                style={{marginBottom: 10}}
+                            >
+                                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                    <Image 
+                                        source={cmt['uidAvatar'] ? {uri: cmt['uidAvatar']} : images.avatar_1 } 
+                                        style={styles.avatar} 
+                                    />
+                                    <View style={{backgroundColor: COLORS.darkgray, padding: 5, borderRadius: 10}}>
+                                        <Text style={{...FONTS.body3, color: 'black'}}>{cmt['uidName']}</Text>
+                                        <Text>{cmt['content']}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        )
+                    }
+                </View>
+                <View style={{paddingBottom: 50}}></View>
+            </ScrollView>
         </View>
     )
 }

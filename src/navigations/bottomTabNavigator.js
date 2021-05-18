@@ -6,6 +6,7 @@ import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom
 import { COLORS, icons } from "../constants";
 import Home from '../screens/Home';
 import Profile from '../screens/Profile';
+import Liked from '../screens/Liked';
 
 const TabBarCustomButton = ({ accessibilityState, children, onPress }) => {
 
@@ -111,7 +112,7 @@ const BottomTabNavigator = () => {
 
             <Tab.Screen
                 name="Like"
-                component={Home}
+                component={Liked}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image

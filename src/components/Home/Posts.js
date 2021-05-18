@@ -4,7 +4,7 @@ import * as firebase from 'firebase';
 import { SIZES, COLORS, FONTS, icons } from '../../constants';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const Posts = ({navigation, listPost, setListPost, isMyPost=false}) => {
+const Posts = ({navigation, listPost, setListPost,getAll=true, isMyPost=false, isLiked=false}) => {
     const [uidLogin, setUidLogin] = useState('')
 
     useEffect(() => {
@@ -32,7 +32,7 @@ const Posts = ({navigation, listPost, setListPost, isMyPost=false}) => {
                     setListPost(tmpList)
                 })
         }
-        if(!isMyPost) {
+        if(getAll) {
             firebase.firestore()
                 .collection('places')
                 .onSnapshot(snaps => {
@@ -44,6 +44,36 @@ const Posts = ({navigation, listPost, setListPost, isMyPost=false}) => {
                     })
                     setListPost(tmpList)
                 })
+        }
+
+        if(isLiked) {
+            firebase.firestore()
+                    .collection('likes')
+                    .where('uid', '==', uidLogin)
+                    .onSnapshot(snaps => {
+                        snaps.docs.forEach(doc => {
+                            if(doc.data()['uid'] == uidLogin) {
+                                let listPosts = doc.data()['listPost']
+                                let result = []
+                                listPosts.forEach(post => {
+                                    firebase.firestore()
+                                    .collection('places')
+                                    .where('id', '==', post)
+                                    .onSnapshot(snapshot => {
+                                        snapshot.docs.forEach(element => {
+                                            if(element.data()['id'] == post) {
+                                                result.push({
+                                                    idDoc: element.id,
+                                                    ...element.data()
+                                                })
+                                                setListPost(result)
+                                            }
+                                        });
+                                    })
+                                })
+                            }
+                        })
+                    })
         }
     }
 
@@ -98,8 +128,10 @@ const Posts = ({navigation, listPost, setListPost, isMyPost=false}) => {
                     alignItems: 'center'
                 }}
             >
+                {/* 
+                heart
                 <Icon style={{marginRight: 5}} name="heart" size={20} color={COLORS.primary}/>
-                <Text style={{ ...FONTS.body3 }}>{item.countLike > 0 ? item.countLike : ''}</Text>
+                <Text style={{ ...FONTS.body3 }}>{item.countLike > 0 ? item.countLike : ''}</Text> */}
 
                 {/* Categories */}
                 <View
@@ -111,7 +143,7 @@ const Posts = ({navigation, listPost, setListPost, isMyPost=false}) => {
                     <View
                         style={{ flexDirection: 'row' }}
                     >
-                        <Text style={{ ...FONTS.h3, color: COLORS.darkgray }}> . </Text>
+                        {/* <Text style={{ ...FONTS.h3, color: COLORS.darkgray }}> . </Text> */}
                         <Text style={{ ...FONTS.body3 }}>{item.catagory['name']}</Text>
                         <Text style={{ ...FONTS.h3, color: COLORS.darkgray }}> . </Text>
                     </View>
