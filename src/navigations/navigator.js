@@ -6,6 +6,7 @@ import Login from '../screens/Login';
 import Signup from '../screens/Signup';
 import PostsDetail from '../screens/PostsDetail';
 import NewPost from '../screens/NewPost';
+import EditPost from '../screens/EditPost';
 
 const Stack = createStackNavigator();
 
@@ -22,6 +23,7 @@ const StackNavigator = () => {
             <Stack.Screen name="Signup" component={Signup} />
             <Stack.Screen name="PostsDetail" component={PostsDetail} />
             <Stack.Screen name="NewPost" component={NewPost} />
+            <Stack.Screen name="EditPost" component={EditPost} />
         </Stack.Navigator>
     )
 }

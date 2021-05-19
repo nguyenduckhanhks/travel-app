@@ -19,7 +19,7 @@ import * as ImagePicker from 'expo-image-picker';
 import {Picker} from '@react-native-picker/picker';
 import * as firebase from 'firebase';
 
-const NewPost = ({navigation}) => {
+const EditPost = ({navigation, route}) => {
     const [uidLogin, setUidLogin] = useState('')
     const [name, setName] = useState('')
     const [address, setAddress] = useState('')
@@ -27,6 +27,7 @@ const NewPost = ({navigation}) => {
     const [catagory, setCatagory] = useState('')
     const [description, setDescription] = useState('')
     const [image, setImage] = useState(null)
+    const [oldData, setOldData] = useState(null)
 
     const [isChooseCata, setIsChooseCata] = useState(false)
     const [tmpCata, setTmpCata] = useState('')
@@ -52,6 +53,63 @@ const NewPost = ({navigation}) => {
         })
         getCatagories()
     }, [uidLogin])
+
+    useEffect(() => {
+        getPostData()
+    }, [listCatagories])
+
+    const getPostData = () => {
+        if(!route.params.postId) return
+        firebase.firestore()
+                .collection('places')
+                .where('id', '==', route.params.postId)
+                .onSnapshot(snaps => {
+                    let have = false
+                    snaps.docs.forEach(doc => {
+                        let data = {
+                            idDoc: doc.id,
+                            ...doc.data()
+                        }
+                        if(data['id'] == route.params.postId) {
+                            have = true
+                            setOldData(data)
+                            setName(data['name'])
+                            setAddress(data['address'])
+                            setCost(data['cost'])
+                            setCatagory(getIdCata(data['catagory']['id']))
+                            setTmpCata(getIdCata(data['catagory']['id']))
+                            setDescription(data['description'])
+                            setImage(data['image'])
+                            return;
+                        }
+                    })
+                    if(!have) notifyErr('Không tìm thấy dữ liệu địa điểm!')
+                })
+    }
+
+    let getIdCata = (idCata) => {
+        if(!listCatagories) return 0
+        let result = 0;
+        listCatagories.forEach((cata, index) => {
+            if(cata['id'] == idCata) {
+                return result = index
+            }
+        });
+        return result 
+    }
+
+    const notifyErr = (text) => {
+        Alert.alert(
+            'Thông báo',
+            text, 
+            [
+                {
+                    text: 'OK',
+                    onPress: () => navigation.navigate('Home')
+                }
+            ]
+        )
+    }
 
     const getCatagories = () => {
         firebase.firestore()
@@ -79,7 +137,7 @@ const NewPost = ({navigation}) => {
         }
     };
 
-    const onCreateNewPlace = async() => {
+    const onEditPlace = async() => {
         if(!uidLogin) return Alert.alert('Vui lòng đăng nhập để sử dụng chức năng này')
         if(!listCatagories) return Alert.alert('Chưa có danh sách danh mục sản phẩm')
 
@@ -87,44 +145,62 @@ const NewPost = ({navigation}) => {
             return Alert.alert('Vui lòng nhập đầy đủ thông tin cần thiết!')
         setLoading(true)
 
-        const response = await fetch(image);
-        const blob  = await response.blob();
+        let updateData = JSON.parse(JSON.stringify(oldData))
+        updateData['name'] = name
+        updateData['address'] = address
+        updateData['catagory'] = listCatagories[catagory]
+        updateData['description'] = description
+        updateData['cost'] = cost
 
-        let ref = firebase.storage().ref().child("images/" + 'IMG_' + Date.now());
-        return ref.put(blob).then(snapshot => {
-            snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                let newPlace = {
-                    id: Date.now().toString(),
-                    name: name,
-                    image: downloadURL,
-                    address: address,
-                    lat: '',
-                    long:'',
-                    cost: cost,
-                    catagory: listCatagories[catagory],
-                    description: description,
-                    countLike: 0,
-                    rate: 5,
-                    auth: uidLogin
-                }
-        
-                firebase.firestore()
-                        .collection('places')
-                        .doc(newPlace[id])
-                        .set(newPlace)
-                        .then(res => {
-                            navigation.navigate('Home')
+        if(oldData['image'] !== image) {
+            const response = await fetch(image);
+            const blob  = await response.blob();
+
+            let ref = firebase.storage().ref().child("images/" + 'IMG_' + Date.now());
+            return ref.put(blob).then(snapshot => {
+                snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                    updateData['image'] = downloadURL
+                    let updatePlace = JSON.parse(JSON.stringify(updateData))
+                    delete updatePlace['idDoc']
+            
+                    firebase.firestore()
+                            .collection('places')
+                            .doc(oldData['idDoc'])
+                            .update(updatePlace)
+                            .then(res => {
+                                navigation.navigate('PostsDetail', {
+                                    postData: updateData
+                                })
+                                setLoading(false)
+                            })
+                            .catch(err => {
+                                setLoading(false)
+                                Alert.alert(err)
+                            })
+                    saveImageInfo(downloadURL)
+                }).catch(err => {
+                    setLoading(false)
+                    Alert.alert(err)
+                });
+            })
+        } else {
+            let updatePlace = JSON.parse(JSON.stringify(updateData))
+            delete updatePlace['idDoc']
+            firebase.firestore()
+                    .collection('places')
+                    .doc(oldData['idDoc'])
+                    .update(updatePlace)
+                    .then(res => {
+                        navigation.navigate('PostsDetail', {
+                            postData: updateData
                         })
-                        .catch(err => {
-                            setLoading(false)
-                            Alert.alert(err)
-                        })
-                saveImageInfo(downloadURL)
-            }).catch(err => {
-                setLoading(false)
-                Alert.alert(err)
-            });
-        })
+                        setLoading(false)
+                    })
+                    .catch(err => {
+                        setLoading(false)
+                        Alert.alert(err)
+                    })
+        }
     }
 
     const saveImageInfo = (uri) => {
@@ -322,12 +398,12 @@ const NewPost = ({navigation}) => {
                             !loading ?
                             <TouchableOpacity 
                                 style={styles.button} 
-                                onPress={() => onCreateNewPlace()}
+                                onPress={() => onEditPlace()}
                             >
                                 <LinearGradient colors={[COLORS.primary, COLORS.primary]} style={styles.gradient}>
                                     <View style={{flexDirection: 'row'}}>
                                         <Text style={styles.text}>
-                                            Đăng bài
+                                            Lưu
                                         </Text>
                                     </View>
                                 </LinearGradient>
@@ -353,7 +429,7 @@ const NewPost = ({navigation}) => {
     )
 }
 
-export default NewPost
+export default EditPost
 
 const styles = StyleSheet.create({
     container: {

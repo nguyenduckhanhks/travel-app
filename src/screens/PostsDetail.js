@@ -42,6 +42,10 @@ const PostsDetail = ({navigation, route}) => {
     }, [uidLogin])
 
     useEffect(() => {
+        setPostData(route.params.postData)
+    }, [route.params.postData])
+
+    useEffect(() => {
         if(!postData) return
         // get auth data
         if(postData['auth']) {
@@ -124,6 +128,9 @@ const PostsDetail = ({navigation, route}) => {
             <Header 
                 navigation={navigation}
                 postDataName={postData ? postData['name'] : 'POST NAME'}
+                isMyPost={postData && uidLogin ? (postData['auth'] == uidLogin) : false}
+                postId={postData ? postData['id'] : ''}
+                postIdDoc={postData ? postData['idDoc'] : ''}
             />
             
             <KeyboardAwareScrollView style={styles.content}>
