@@ -144,6 +144,12 @@ const Profile = ({navigation}) => {
         })
     }
 
+    const logout = () => {
+        firebase.auth().signOut().then(() => {
+            navigation.navigate('Login')
+        })
+    }
+
     return (
         <SafeAreaView style={{backgroundColor: COLORS.lightGray4, flex: 1,}}>
             <View style={{ flexDirection: 'row', height: 50 }}>
@@ -180,13 +186,23 @@ const Profile = ({navigation}) => {
                     </View>
                 </View>
 
-                <View
+                <TouchableOpacity
                     style={{
                         width: 50,
-                        paddingLeft: SIZES.padding * 2,
+                        paddingRight: SIZES.padding * 2,
                         justifyContent: 'center'
                     }}
-                ></View>
+                    onPress={() => logout()}
+                >
+                    <Image
+                        source={icons.logout}
+                        resizeMode="contain"
+                        style={{
+                            width: 30,
+                            height: 30
+                        }}
+                    />
+                </TouchableOpacity>
             </View>
             
             <View style={styles.container}>

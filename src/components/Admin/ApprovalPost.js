@@ -2,9 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {FlatList, View, TouchableOpacity, Image, Text, StyleSheet} from 'react-native';
 import * as firebase from 'firebase';
 import { SIZES, COLORS, FONTS, icons } from '../../constants';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { LinearGradient } from 'expo-linear-gradient';
 
-const Posts = ({navigation, listPost, setListPost,getAll=true, isMyPost=false, isLiked=false}) => {
+const ApprovalPost = ({navigation}) => {
+    const [listPost, setListPost] = useState([])
     const [uidLogin, setUidLogin] = useState('')
 
     useEffect(() => {
@@ -18,66 +19,36 @@ const Posts = ({navigation, listPost, setListPost,getAll=true, isMyPost=false, i
 
     const getAllListPost = () => {
         if(!uidLogin) return
-        if(isMyPost) {
-            firebase.firestore()
-                .collection('places')
-                .where('auth', '==', uidLogin)
-                .where('status', '==', 'active')
-                .onSnapshot(snaps => {
-                    let tmpList = snaps.docs.map(doc => {
-                        return {
-                            idDoc: doc.id,
-                            ...doc.data()
-                        }
-                    })
-                    setListPost(tmpList)
+        firebase.firestore()
+            .collection('places')
+            .where('status', '==', 'waiting')
+            .onSnapshot(snaps => {
+                let tmpList = snaps.docs.map(doc => {
+                    return {
+                        idDoc: doc.id,
+                        ...doc.data()
+                    }
                 })
-        }
-        if(getAll) {
-            firebase.firestore()
-                .collection('places')
-                .where('status', '==', 'active')
-                .onSnapshot(snaps => {
-                    let tmpList = snaps.docs.map(doc => {
-                        return {
-                            idDoc: doc.id,
-                            ...doc.data()
-                        }
-                    })
-                    setListPost(tmpList)
-                })
-        }
+                setListPost(tmpList)
+            })
+    }
 
-        if(isLiked) {
-            firebase.firestore()
-                    .collection('likes')
-                    .where('uid', '==', uidLogin)
-                    .onSnapshot(snaps => {
-                        snaps.docs.forEach(doc => {
-                            if(doc.data()['uid'] == uidLogin) {
-                                let listPosts = doc.data()['listPost']
-                                let result = []
-                                listPosts.forEach(post => {
-                                    firebase.firestore()
-                                    .collection('places')
-                                    .where('id', '==', post)
-                                    .where('status', '==', 'active')
-                                    .onSnapshot(snapshot => {
-                                        snapshot.docs.forEach(element => {
-                                            if(element.data()['id'] == post) {
-                                                result.push({
-                                                    idDoc: element.id,
-                                                    ...element.data()
-                                                })
-                                                setListPost(result)
-                                            }
-                                        });
-                                    })
-                                })
-                            }
-                        })
-                    })
-        }
+    const approvalPost = (idDoc) => {
+        firebase.firestore()
+                .collection('places')
+                .doc(idDoc)
+                .update({
+                    status: 'active'
+                })
+    }
+
+    const removePost = (idDoc) => {
+        firebase.firestore()
+                .collection('places')
+                .doc(idDoc)
+                .update({
+                    status: 'reject'
+                })
     }
 
     const renderItem = ({ item }) => (
@@ -131,10 +102,6 @@ const Posts = ({navigation, listPost, setListPost,getAll=true, isMyPost=false, i
                     alignItems: 'center'
                 }}
             >
-                {/* 
-                heart
-                <Icon style={{marginRight: 5}} name="heart" size={20} color={COLORS.primary}/>
-                <Text style={{ ...FONTS.body3 }}>{item.countLike > 0 ? item.countLike : ''}</Text> */}
 
                 {/* Categories */}
                 <View
@@ -163,6 +130,39 @@ const Posts = ({navigation, listPost, setListPost,getAll=true, isMyPost=false, i
                         marginLeft: 5
                     }}
                 />
+                <TouchableOpacity 
+                    onPress={() => approvalPost(item['idDoc'])}
+                >
+                    <LinearGradient colors={[COLORS.primary,COLORS.primary]} 
+                        style={{
+                            paddingVertical: 5,
+                            backgroundColor: COLORS.white,
+                            borderRadius:  10,
+                            paddingHorizontal: 20,
+                            alignItems: 'center',
+                            marginLeft: 10
+                        }}
+                    >
+                        <Text style={{...FONTS.h4, color: COLORS.white}}>Duyệt</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                    onPress={() => removePost(item['idDoc'])}
+                >
+                    <LinearGradient colors={[COLORS.darkgray,COLORS.darkgray]} 
+                        style={{
+                            paddingVertical: 5,
+                            backgroundColor: COLORS.white,
+                            borderRadius:  10,
+                            paddingHorizontal: 20,
+                            alignItems: 'center',
+                            marginLeft: 10
+                        }}
+                    >
+                        <Text style={{...FONTS.h4, color: COLORS.white}}>Xóa</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
             </View>
         </TouchableOpacity>
     )
@@ -198,4 +198,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Posts;
+export default ApprovalPost;

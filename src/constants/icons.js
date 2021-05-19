@@ -27,6 +27,7 @@ export const plus = require("../../assets/icons/plus.png");
 export const instagram = require("../../assets/icons/instagram.png");
 export const image = require("../../assets/icons/image.png");
 export const world = require("../../assets/icons/world.png");
+export const logout = require("../../assets/icons/logout.png");
 
 export default {
     back,
@@ -57,5 +58,6 @@ export default {
     plus,
     instagram,
     image,
-    world
+    world,
+    logout
 }

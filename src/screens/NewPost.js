@@ -105,7 +105,8 @@ const NewPost = ({navigation}) => {
                     description: description,
                     countLike: 0,
                     rate: 5,
-                    auth: uidLogin
+                    auth: uidLogin,
+                    status: 'waiting'
                 }
         
                 firebase.firestore()

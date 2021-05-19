@@ -26,7 +26,8 @@ const Signup = ({navigation}) => {
                 bgImage: '',
                 status: 'online',
                 address: 'Viet Nam',
-                description: ''
+                description: '',
+                type: 'user'
             }
             if(res['user']['uid']) {
                 firebase.firestore()
