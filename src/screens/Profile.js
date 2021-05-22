@@ -17,6 +17,7 @@ const Profile = ({navigation}) => {
     const [mode, setMode] = useState(['Post'])
     const [editProfileImg, setEditProfileImg] = useState(false)
     const [listPost, setListPost] = useState([])
+    const [lastPost, setLastPost] = useState(null)
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged(user => {
@@ -322,6 +323,9 @@ const Profile = ({navigation}) => {
                         listPost={listPost}
                         setListPost={setListPost}
                         isMyPost={true}
+                        getAll={false}
+                        lastPost={lastPost}
+                        setLastPost={setLastPost}
                     />
                 }
 

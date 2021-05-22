@@ -3,10 +3,11 @@ import {FlatList, View, TouchableOpacity, Image, Text, StyleSheet} from 'react-n
 import * as firebase from 'firebase';
 import { SIZES, COLORS, FONTS, icons } from '../../constants';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { LinearGradient } from 'expo-linear-gradient';
 
-const Posts = ({navigation, listPost, setListPost,getAll=true, isMyPost=false, isLiked=false}) => {
+const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=true, isMyPost=false, isLiked=false}) => {
     const [uidLogin, setUidLogin] = useState('')
-
+    
     useEffect(() => {
         firebase.auth().onAuthStateChanged(user => {
             if(!user) return navigation.navigate('Login')
@@ -19,40 +20,94 @@ const Posts = ({navigation, listPost, setListPost,getAll=true, isMyPost=false, i
     const getAllListPost = () => {
         if(!uidLogin) return
         if(isMyPost) {
-            firebase.firestore()
-                .collection('places')
-                .where('auth', '==', uidLogin)
-                .where('status', '==', 'active')
-                .onSnapshot(snaps => {
-                    let tmpList = snaps.docs.map(doc => {
-                        return {
-                            idDoc: doc.id,
-                            ...doc.data()
-                        }
-                    })
-                    setListPost(tmpList)
-                })
+            if(!lastPost) {
+                firebase.firestore()
+                        .collection('places')
+                        .where('auth', '==', uidLogin)
+                        .where('status', '==', 'active')
+                        .limit(1)
+                        .onSnapshot(snaps => {
+                            setLastPost(snaps.docs[snaps.docs.length - 1])
+                            let tmpList = snaps.docs.map(doc => {
+                                return {
+                                    idDoc: doc.id,
+                                    ...doc.data()
+                                }
+                            })
+                            setListPost(tmpList)
+                        })
+            } else {
+                firebase.firestore()
+                        .collection('places')
+                        .where('auth', '==', uidLogin)
+                        .where('status', '==', 'active')
+                        .startAfter(lastPost)
+                        .limit(1)
+                        .onSnapshot(snaps => {
+                            if(snaps.docs.length > 0) {
+                                setLastPost(snaps.docs[snaps.docs.length - 1])
+                            }
+                            let tmpList = snaps.docs.map(doc => {
+                                return {
+                                    idDoc: doc.id,
+                                    ...doc.data()
+                                }
+                            })
+                            setListPost([
+                                ...listPost,
+                                ...tmpList
+                            ])
+                        })
+            }
         }
         if(getAll) {
-            firebase.firestore()
-                .collection('places')
-                .where('status', '==', 'active')
-                .onSnapshot(snaps => {
-                    let tmpList = snaps.docs.map(doc => {
-                        return {
-                            idDoc: doc.id,
-                            ...doc.data()
-                        }
-                    })
-                    setListPost(tmpList)
-                })
+            if(!lastPost) {
+                firebase.firestore()
+                        .collection('places')
+                        .where('status', '==', 'active')
+                        .limit(1)
+                        .onSnapshot(snaps => {
+                            setLastPost(snaps.docs[snaps.docs.length - 1])
+                            let tmpList = snaps.docs.map(doc => {
+                                return {
+                                    idDoc: doc.id,
+                                    ...doc.data()
+                                }
+                            })
+                            setListPost(tmpList)
+                        })
+            } else {
+                firebase.firestore()
+                        .collection('places')
+                        .where('status', '==', 'active')
+                        .startAfter(lastPost)
+                        .limit(1)
+                        .onSnapshot(snaps => {
+                            if(snaps.docs.length > 0) {
+                                setLastPost(snaps.docs[snaps.docs.length - 1])
+                            }
+                            let tmpList = snaps.docs.map(doc => {
+                                return {
+                                    idDoc: doc.id,
+                                    ...doc.data()
+                                }
+                            })
+                            setListPost([
+                                ...listPost,
+                                ...tmpList
+                            ])
+                        })
+            }
         }
 
         if(isLiked) {
-            firebase.firestore()
+            if(!lastPost) {
+                firebase.firestore()
                     .collection('likes')
                     .where('uid', '==', uidLogin)
+                    // .limit(1)
                     .onSnapshot(snaps => {
+                        // setLastPost(snaps.docs[snaps.docs.length - 1])
                         snaps.docs.forEach(doc => {
                             if(doc.data()['uid'] == uidLogin) {
                                 let listPosts = doc.data()['listPost']
@@ -77,6 +132,46 @@ const Posts = ({navigation, listPost, setListPost,getAll=true, isMyPost=false, i
                             }
                         })
                     })
+            } 
+            // else {
+            //     firebase.firestore()
+            //         .collection('likes')
+            //         .where('uid', '==', uidLogin)
+            //         .startAfter(lastPost)
+            //         .limit(1)
+            //         .onSnapshot(snaps => {
+            //             if(snaps.docs.length > 0) {
+            //                 setLastPost(snaps.docs[snaps.docs.length - 1])
+            //             }
+            //             snaps.docs.forEach(doc => {
+            //                 if(doc.data()['uid'] == uidLogin) {
+            //                     let listPosts = doc.data()['listPost']
+            //                     let result = []
+            //                     listPosts.forEach(post => {
+            //                         firebase.firestore()
+            //                         .collection('places')
+            //                         .where('id', '==', post)
+            //                         .where('status', '==', 'active')
+            //                         .onSnapshot(snapshot => {
+            //                             snapshot.docs.forEach(element => {
+            //                                 if(element.data()['id'] == post) {
+            //                                     result.push({
+            //                                         idDoc: element.id,
+            //                                         ...element.data()
+            //                                     })
+            //                                     // setListPost(result)
+            //                                     setListPost([
+            //                                         ...listPost,
+            //                                         ...result
+            //                                     ])
+            //                                 }
+            //                             });
+            //                         })
+            //                     })
+            //                 }
+            //             })
+            //         })
+            // }
         }
     }
 
@@ -164,6 +259,31 @@ const Posts = ({navigation, listPost, setListPost,getAll=true, isMyPost=false, i
                     }}
                 />
             </View>
+            {
+                listPost.indexOf(item) == listPost.length - 1 && 
+                <View>
+                    <TouchableOpacity 
+                        style={{
+                            width: '40%',
+                            marginLeft: '30%',
+                            marginBottom: 20,
+                            marginTop: 50
+                        }}
+                        onPress={() => getAllListPost()}
+                    >
+                        <LinearGradient colors={[COLORS.primary, COLORS.primary]} 
+                            style={{
+                                paddingVertical: 10,
+                                backgroundColor: COLORS.white,
+                                borderRadius:  20,
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Text style={{...FONTS.body3, color: COLORS.white}}>Xem thêm</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </View>
+            }
         </TouchableOpacity>
     )
 

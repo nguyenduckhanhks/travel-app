@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {FlatList, View, TouchableOpacity, Image, Text, StyleSheet} from 'react-native';
+import {FlatList, View, TouchableOpacity, Image, Text, StyleSheet, Alert} from 'react-native';
 import * as firebase from 'firebase';
 import { SIZES, COLORS, FONTS, icons } from '../../constants';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const ApprovalPost = ({navigation}) => {
+const ManageMyPost = ({navigation, mode=''}) => {
     const [listPost, setListPost] = useState([])
     const [uidLogin, setUidLogin] = useState('')
     const [lastPost, setLastPost] = useState(null)
@@ -20,10 +20,12 @@ const ApprovalPost = ({navigation}) => {
 
     const getAllListPost = () => {
         if(!uidLogin) return
+
         if(!lastPost) {
             firebase.firestore()
                     .collection('places')
-                    .where('status', '==', 'waiting')
+                    .where('status', '==', mode)
+                    .where('auth', '==', uidLogin)
                     .limit(1)
                     .onSnapshot(snaps => {
                         setLastPost(snaps.docs[snaps.docs.length - 1])
@@ -38,9 +40,10 @@ const ApprovalPost = ({navigation}) => {
         } else {
             firebase.firestore()
                     .collection('places')
-                    .where('status', '==', 'waiting')
+                    .where('status', '==', mode)
+                    .where('auth', '==', uidLogin)
                     .startAfter(lastPost)
-                    .limit(1)
+                    .limit(1)  
                     .onSnapshot(snaps => {
                         if(snaps.docs.length > 0) {
                             setLastPost(snaps.docs[snaps.docs.length - 1])
@@ -55,26 +58,8 @@ const ApprovalPost = ({navigation}) => {
                             ...listPost,
                             ...tmpList
                         ])
-                    })
+                    }) 
         }
-    }
-
-    const approvalPost = (idDoc) => {
-        firebase.firestore()
-                .collection('places')
-                .doc(idDoc)
-                .update({
-                    status: 'active'
-                })
-    }
-
-    const removePost = (idDoc) => {
-        firebase.firestore()
-                .collection('places')
-                .doc(idDoc)
-                .update({
-                    status: 'reject'
-                })
     }
 
     const renderItem = ({ item }) => (
@@ -156,39 +141,6 @@ const ApprovalPost = ({navigation}) => {
                         marginLeft: 5
                     }}
                 />
-                <TouchableOpacity 
-                    onPress={() => approvalPost(item['idDoc'])}
-                >
-                    <LinearGradient colors={[COLORS.primary,COLORS.primary]} 
-                        style={{
-                            paddingVertical: 5,
-                            backgroundColor: COLORS.white,
-                            borderRadius:  10,
-                            paddingHorizontal: 20,
-                            alignItems: 'center',
-                            marginLeft: 10
-                        }}
-                    >
-                        <Text style={{...FONTS.h4, color: COLORS.white}}>Duyệt</Text>
-                    </LinearGradient>
-                </TouchableOpacity>
-
-                <TouchableOpacity 
-                    onPress={() => removePost(item['idDoc'])}
-                >
-                    <LinearGradient colors={[COLORS.darkgray,COLORS.darkgray]} 
-                        style={{
-                            paddingVertical: 5,
-                            backgroundColor: COLORS.white,
-                            borderRadius:  10,
-                            paddingHorizontal: 20,
-                            alignItems: 'center',
-                            marginLeft: 10
-                        }}
-                    >
-                        <Text style={{...FONTS.h4, color: COLORS.white}}>Xóa</Text>
-                    </LinearGradient>
-                </TouchableOpacity>
             </View>
             {
                 listPost.indexOf(item) == listPost.length - 1 && 
@@ -249,4 +201,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ApprovalPost;
+export default ManageMyPost;

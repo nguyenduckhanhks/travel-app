@@ -9,6 +9,7 @@ import Posts from '../components/Home/Posts';
 const Home = (props) => {
     const [selectedCategory, setSelectedCategory] = useState('all')
     const [listPost, setListPost] = useState([])
+    const [lastPost, setLastPost] = useState(null)
 
     return (
         <SafeAreaView style={styles.container}>
@@ -21,6 +22,8 @@ const Home = (props) => {
                 navigation={props.navigation}
                 listPost={listPost}
                 setListPost={setListPost}
+                lastPost={lastPost}
+                setLastPost={setLastPost}
             />
         </SafeAreaView>
     )
