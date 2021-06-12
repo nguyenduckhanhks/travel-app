@@ -1,12 +1,28 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {FlatList, View, TouchableOpacity, Image, Text, StyleSheet} from 'react-native';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app'
 import { SIZES, COLORS, FONTS, icons } from '../../constants';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=true, isMyPost=false, isLiked=false}) => {
+const usePrevious = (value) => {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+}
+
+const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=true, isMyPost=false, isLiked=false, selectedCategory}) => {
     const [uidLogin, setUidLogin] = useState('')
+    const prevCata = usePrevious(selectedCategory)
+
+    useEffect(() => {
+        if(prevCata != selectedCategory) {
+            setListPost([])
+            setLastPost(null)
+        }
+    }, [selectedCategory])
     
     useEffect(() => {
         firebase.auth().onAuthStateChanged(user => {
@@ -15,7 +31,7 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
             setUidLogin(uidLogin)
         })
         getAllListPost()
-    }, [uidLogin])
+    }, [uidLogin, selectedCategory])
 
     const getAllListPost = () => {
         if(!uidLogin) return
@@ -61,11 +77,16 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
             }
         }
         if(getAll) {
-            if(!lastPost) {
-                firebase.firestore()
+            if(!lastPost || prevCata != selectedCategory) {
+                let ft = firebase.firestore()
                         .collection('places')
                         .where('status', '==', 'active')
-                        .limit(1)
+
+                if(selectedCategory != 'all') {
+                    ft = ft.where('catagory.id', '==', selectedCategory)
+                }
+                        
+                        ft.limit(1)
                         .onSnapshot(snaps => {
                             setLastPost(snaps.docs[snaps.docs.length - 1])
                             let tmpList = snaps.docs.map(doc => {
@@ -77,10 +98,15 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
                             setListPost(tmpList)
                         })
             } else {
-                firebase.firestore()
+                let ft = firebase.firestore()
                         .collection('places')
                         .where('status', '==', 'active')
-                        .startAfter(lastPost)
+
+                if(selectedCategory != 'all') {
+                    ft = ft.where('catagory.id', '==', selectedCategory)
+                }
+
+                        ft.startAfter(lastPost)
                         .limit(1)
                         .onSnapshot(snaps => {
                             if(snaps.docs.length > 0) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SafeAreaView, StyleSheet, View, TouchableOpacity, TextInput, Dimensions, Alert, Image, Text} from 'react-native';
 import { COLORS, FONTS, SIZES, icons, images } from '../constants';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/Ionicons';
 

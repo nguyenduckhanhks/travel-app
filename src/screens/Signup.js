@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'reac
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, FONTS } from '../constants';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app'
 
 const Signup = ({navigation}) => {
     const [name, setName] = useState('Nguyen Van A')

@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native'
 import { useFonts } from "@use-expo/font";
 import { View } from 'react-native';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app'
 import 'firebase/firestore';
 
 import StackNavigator from './src/navigations/navigator';

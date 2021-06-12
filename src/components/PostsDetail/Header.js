@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
 import { COLORS, FONTS, SIZES, icons } from '../../constants';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app'
 
 const Header = ({navigation, postDataName, isMyPost, postId, postIdDoc}) => {
     const [menu, setMenu] = useState(false)

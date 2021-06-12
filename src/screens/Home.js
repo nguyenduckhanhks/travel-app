@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet, Text } from 'react-native';
 import {COLORS} from '../constants';
 
 import Catagory from '../components/Home/Catagory';
@@ -24,6 +24,7 @@ const Home = (props) => {
                 setListPost={setListPost}
                 lastPost={lastPost}
                 setLastPost={setLastPost}
+                selectedCategory={selectedCategory}
             />
         </SafeAreaView>
     )

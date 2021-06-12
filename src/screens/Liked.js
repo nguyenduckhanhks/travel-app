@@ -3,7 +3,7 @@ import {View, Text, SafeAreaView, TouchableOpacity, Image} from 'react-native';
 import {COLORS, icons, SIZES, FONTS, images} from '../constants';
 import Posts from '../components/Home/Posts';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app'
 import ApprovalPost from '../components/Admin/ApprovalPost';
 import ManageMyPost from '../components/Admin/ManageMyPost';
 

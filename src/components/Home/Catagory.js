@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import {FONTS, SIZES, icons, COLORS} from '../../constants';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app'
 
 const Catagory = ({setSelectedCategory, selectedCategory}) => {
     const [uidLogin, setUidLogin] = useState('')

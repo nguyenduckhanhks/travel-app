@@ -4,7 +4,7 @@ import {COLORS, icons, SIZES, FONTS, images} from '../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Posts from '../components/Home/Posts';
 import EditProfile from '../components/Profile/EditProfile';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';

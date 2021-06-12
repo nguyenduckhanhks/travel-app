@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {FlatList, View, TouchableOpacity, Image, Text, StyleSheet} from 'react-native';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app'
 import { SIZES, COLORS, FONTS, icons } from '../../constants';
 import { LinearGradient } from 'expo-linear-gradient';
 

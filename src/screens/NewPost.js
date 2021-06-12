@@ -17,7 +17,7 @@ import { COLORS, FONTS, images, SIZES, icons } from '../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as ImagePicker from 'expo-image-picker';
 import {Picker} from '@react-native-picker/picker';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app'
 
 const NewPost = ({navigation}) => {
     const [uidLogin, setUidLogin] = useState('')

@@ -2,7 +2,7 @@ import React from 'react';
 import { Animated, View, Image, Text, StyleSheet, TouchableOpacity, Alert, ScrollView} from 'react-native';
 import { SIZES, COLORS, FONTS, icons, images } from '../../constants';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app'
 
 const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike, listCmt, onOpenCmt}) => {
 
