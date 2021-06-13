@@ -13,16 +13,17 @@ const usePrevious = (value) => {
     return ref.current;
 }
 
-const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=true, isMyPost=false, isLiked=false, selectedCategory}) => {
+const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=true, isMyPost=false, isLiked=false, selectedCategory, searchText}) => {
     const [uidLogin, setUidLogin] = useState('')
     const prevCata = usePrevious(selectedCategory)
+    const preTextSearch = usePrevious(searchText)
 
     useEffect(() => {
-        if(prevCata != selectedCategory) {
+        if(prevCata != selectedCategory || preTextSearch != searchText) {
             setListPost([])
             setLastPost(null)
         }
-    }, [selectedCategory])
+    }, [selectedCategory, searchText])
     
     useEffect(() => {
         firebase.auth().onAuthStateChanged(user => {
@@ -31,7 +32,7 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
             setUidLogin(uidLogin)
         })
         getAllListPost()
-    }, [uidLogin, selectedCategory])
+    }, [uidLogin, selectedCategory, searchText])
 
     const getAllListPost = () => {
         if(!uidLogin) return
@@ -77,13 +78,18 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
             }
         }
         if(getAll) {
-            if(!lastPost || prevCata != selectedCategory) {
+            if(!lastPost || prevCata != selectedCategory || preTextSearch != searchText) {
                 let ft = firebase.firestore()
                         .collection('places')
                         .where('status', '==', 'active')
 
                 if(selectedCategory != 'all') {
                     ft = ft.where('catagory.id', '==', selectedCategory)
+                }
+
+                if(searchText != '') {
+                    ft = ft.where('name', '>=', searchText)
+                            .where('name', '<=', searchText + '\uf8ff')
                 }
                         
                         ft.limit(1)
@@ -104,6 +110,11 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
 
                 if(selectedCategory != 'all') {
                     ft = ft.where('catagory.id', '==', selectedCategory)
+                }
+
+                if(searchText != '') {
+                    ft = ft.where('name', '>=', searchText)
+                            .where('name', '<=', searchText + '\uf8ff')
                 }
 
                         ft.startAfter(lastPost)
