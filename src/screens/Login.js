@@ -52,12 +52,12 @@ const Login = ({navigation}) => {
                     />
                 </View>
                 <Text 
-                    style={{textAlign: 'right', marginTop: 5, fontSize: 15}}
+                    style={{textAlign: 'right', marginTop: 10, fontSize: 15}}
                     onPress={() => {
                         navigation.navigate('ForgotPassword')
                     }}
                 >
-                    Forgot password?
+                    Quên mật khẩu ?
                 </Text>
 
                 <TouchableOpacity 
