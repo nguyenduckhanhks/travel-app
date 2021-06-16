@@ -1,15 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import { 
+import {
     View,
-    Text, 
-    StyleSheet, 
-    TextInput, 
-    TouchableOpacity, 
+    Text,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
     Image,
     SafeAreaView,
     Modal,
     Alert,
-    ActivityIndicator
+    ActivityIndicator, Linking
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -23,6 +23,8 @@ const NewPost = ({navigation}) => {
     const [uidLogin, setUidLogin] = useState('')
     const [name, setName] = useState('')
     const [address, setAddress] = useState('')
+    const [lat, setLat] = useState('')
+    const [long, setLong] = useState('')
     const [cost, setCost] = useState('')
     const [catagory, setCatagory] = useState('')
     const [description, setDescription] = useState('')
@@ -83,7 +85,7 @@ const NewPost = ({navigation}) => {
         if(!uidLogin) return Alert.alert('Vui lòng đăng nhập để sử dụng chức năng này')
         if(!listCatagories) return Alert.alert('Chưa có danh sách danh mục sản phẩm')
 
-        if(!image || !name || !address || catagory < 0 || catagory == '' || !description || !cost) 
+        if(!image || !name || !address || !lat || !long || catagory < 0 || catagory == '' || !description || !cost)
             return Alert.alert('Vui lòng nhập đầy đủ thông tin cần thiết!')
         setLoading(true)
 
@@ -98,8 +100,8 @@ const NewPost = ({navigation}) => {
                     name: name,
                     image: downloadURL,
                     address: address,
-                    lat: '',
-                    long:'',
+                    lat: lat,
+                    long: long,
                     cost: cost,
                     catagory: listCatagories[catagory],
                     description: description,
@@ -150,6 +152,10 @@ const NewPost = ({navigation}) => {
                     }
                     setLoading(false)
                 })
+    }
+
+    const getGoogleMap = async () => {
+        Linking.openURL("https://www.google.com/maps/search/?api=1&query=");
     }
     
     return (
@@ -243,6 +249,29 @@ const NewPost = ({navigation}) => {
                                 onChangeText={setAddress}
                             />
                         </View>
+
+                        <Text style={styles.label}>Latitude</Text>
+                        <View style={styles.inputSection}>
+                            <TextInput
+                                style={styles.input}
+                                value={lat}
+                                onChangeText={setLat}
+                            />
+                        </View>
+
+                        <Text style={styles.label}>Longitude</Text>
+                        <View style={styles.inputSection}>
+                            <TextInput
+                                style={styles.input}
+                                value={long}
+                                onChangeText={setLong}
+                            />
+                        </View>
+
+
+                        <TouchableOpacity style={{marginTop: 20}} onPress = {() => getGoogleMap()}>
+                            <Text style={{color: '#000' , fontSize: 15}}>Click here to get Latitude and Longitude in here(Tick on goole maps and copy the value of coordinates)</Text>
+                        </TouchableOpacity>
 
                         <Text style={styles.label}>Phí dịch vụ</Text>
                         <View style={styles.inputSection}>

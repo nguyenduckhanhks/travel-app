@@ -1,15 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import { 
+import {
     View,
-    Text, 
-    StyleSheet, 
-    TextInput, 
-    TouchableOpacity, 
+    Text,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
     Image,
     SafeAreaView,
     Modal,
     Alert,
-    ActivityIndicator
+    ActivityIndicator, Linking
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -22,6 +22,8 @@ import firebase from 'firebase/app'
 const EditPost = ({navigation, route}) => {
     const [uidLogin, setUidLogin] = useState('')
     const [name, setName] = useState('')
+    const [lat, setLat] = useState('')
+    const [long, setLong] = useState('')
     const [address, setAddress] = useState('')
     const [cost, setCost] = useState('')
     const [catagory, setCatagory] = useState('')
@@ -74,6 +76,8 @@ const EditPost = ({navigation, route}) => {
                             have = true
                             setOldData(data)
                             setName(data['name'])
+                            setLat(data['lat'])
+                            setLong(data['long'])
                             setAddress(data['address'])
                             setCost(data['cost'])
                             setCatagory(getIdCata(data['catagory']['id']))
@@ -141,12 +145,14 @@ const EditPost = ({navigation, route}) => {
         if(!uidLogin) return Alert.alert('Vui lòng đăng nhập để sử dụng chức năng này')
         if(!listCatagories) return Alert.alert('Chưa có danh sách danh mục sản phẩm')
 
-        if(!image || !name || !address || catagory < 0 || catagory == '' || !description || !cost) 
+        if(!image || !name || !lat || !long || !address || catagory < 0 || catagory == '' || !description || !cost)
             return Alert.alert('Vui lòng nhập đầy đủ thông tin cần thiết!')
         setLoading(true)
 
         let updateData = JSON.parse(JSON.stringify(oldData))
         updateData['name'] = name
+        updateData['lat'] = lat
+        updateData['long'] = long
         updateData['address'] = address
         updateData['catagory'] = listCatagories[catagory]
         updateData['description'] = description
@@ -225,6 +231,10 @@ const EditPost = ({navigation, route}) => {
                     }
                     setLoading(false)
                 })
+    }
+
+    const getGoogleMap = async () => {
+        Linking.openURL("https://www.google.com/maps/search/?api=1&query=");
     }
     
     return (
@@ -318,6 +328,29 @@ const EditPost = ({navigation, route}) => {
                                 onChangeText={setAddress}
                             />
                         </View>
+
+                        <Text style={styles.label}>Latitude</Text>
+                        <View style={styles.inputSection}>
+                            <TextInput
+                                style={styles.input}
+                                value={lat}
+                                onChangeText={setLat}
+                            />
+                        </View>
+
+                        <Text style={styles.label}>Longitude</Text>
+                        <View style={styles.inputSection}>
+                            <TextInput
+                                style={styles.input}
+                                value={long}
+                                onChangeText={setLong}
+                            />
+                        </View>
+
+
+                        <TouchableOpacity style={{marginTop: 20}} onPress = {() => getGoogleMap()}>
+                            <Text style={{color: '#000' , fontSize: 15}}>Click here to get Latitude and Longitude in here(Tick on goole maps and copy the value of coordinates)</Text>
+                        </TouchableOpacity>
 
                         <Text style={styles.label}>Phí dịch vụ</Text>
                         <View style={styles.inputSection}>
