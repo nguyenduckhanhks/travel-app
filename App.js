@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {useRef, useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native'
 import { useFonts } from "@use-expo/font";
-import { View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import firebase from 'firebase/app'
 import 'firebase/firestore';
 
 import StackNavigator from './src/navigations/navigator';
+import Animated from 'react-native-reanimated';
+import { duration } from 'moment';
 
 const customFonts = {
     'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
@@ -25,6 +27,8 @@ const firebaseConfig = {
 
 export default function App() {
   const [isLoaded] = useFonts(customFonts);
+
+
 
   if(firebase.apps.length === 0) {
     firebase.initializeApp(firebaseConfig);
