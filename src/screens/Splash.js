@@ -9,7 +9,6 @@ import {
     Animated,
 } from 'react-native';
 import { COLORS, FONTS } from '../constants';
-import { Button } from 'react-native-paper';
 
 export default function Splash({ navigation }) {
     const moveAnim = useRef(new Animated.Value(0)).current;
@@ -37,24 +36,30 @@ export default function Splash({ navigation }) {
             useNativeDriver: false,
         }).start();
     }, [moveAnim, fadeAnim]);
+    useEffect(() => {
+        setTimeout(()=>{
+            return navigation.navigate('Login') 
+        },2500)
+        
+    },[])
     return (
 
         <SafeAreaView style={styles.container}>
+            
             <View style={styles.contentContainer}>
                 <Animated.Image
                     style={[styles.image, { opacity: fadeAnim }]}
-                    source={require('../../assets/icons/car.png')}
+                    source={require('../../assets/logo.png')}
                 />
                 <Animated.View style={[styles.logoContainer, { marginLeft: moveAnim }]}>
                     <Text style={[styles.logoText]}>T</Text>
                     <Animated.Text style={[styles.logoText, { opacity: fadeAnim }]}>
                         ourGuide
                     </Animated.Text>
+                    
                 </Animated.View>
             </View>
-            <Button onPress={() => {
-                navigator.navigate('Home')
-            }}>Bắt đầu khám phá</Button>
+            
         </SafeAreaView>
 
 

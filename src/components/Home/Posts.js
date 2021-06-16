@@ -13,7 +13,7 @@ const usePrevious = (value) => {
     return ref.current;
 }
 
-const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAll = true, isMyPost = false, isLiked = false, selectedCategory, searchText }) => {
+const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAll = true, isMyPost = false, isLiked = false, selectedCategory, searchText,title }) => {
     const [uidLogin, setUidLogin] = useState('')
     const prevCata = usePrevious(selectedCategory)
     const preTextSearch = usePrevious(searchText)
@@ -225,10 +225,6 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
                     alignItems: 'center'
                 }}
             >
-                {/* 
-                heart
-                <Icon style={{marginRight: 5}} name="heart" size={20} color={COLORS.primary}/>
-                <Text style={{ ...FONTS.body3 }}>{item.countLike > 0 ? item.countLike : ''}</Text> */}
 
                 {/* Categories */}
                 <View
@@ -288,7 +284,7 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
 
     return (
         <View>
-            <Text style={{paddingHorizontal: SIZES.padding * 2,...FONTS.h2}}>Bạn muốn đi đâu ?</Text>
+            <Text style={{paddingHorizontal: SIZES.padding * 2,...FONTS.h2}}>{title}</Text>
             <FlatList
                 data={listPost}
                 keyExtractor={item => `${item.id}`}

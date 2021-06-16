@@ -38,7 +38,7 @@ const NewPost = ({navigation}) => {
           if (Platform.OS !== 'web') {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (status !== 'granted') {
-              alert('Sorry, we need camera roll permissions to make this work!');
+              alert('Xin lỗi, chúng tôi cần quyền sử dụng camera để thực hiện!');
             }
           }
         })();

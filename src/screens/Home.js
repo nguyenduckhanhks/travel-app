@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Catagory from '../components/Home/Catagory';
 import Header from '../components/Home/Header';
 import Posts from '../components/Home/Posts';
+import CusStatusBar from '../screens/CusStatusBar';
 
 const Home = (props) => {
     const [selectedCategory, setSelectedCategory] = useState('all')
@@ -15,6 +16,7 @@ const Home = (props) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <CusStatusBar/>
             <Header navigation={props.navigation} />
             <View style={styles.inputSection}>
                 <Icon style={styles.inputIcon} name="search-outline" size={20} color={COLORS.primary} />
@@ -36,6 +38,7 @@ const Home = (props) => {
                 setLastPost={setLastPost}
                 selectedCategory={selectedCategory}
                 searchText={searchText}
+                title="Bạn muốn đi đâu?"
             />
         </SafeAreaView>
     )

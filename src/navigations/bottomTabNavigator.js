@@ -1,4 +1,4 @@
-import React from 'react';
+import React  ,{ useRef, useEffect } from 'react';
 import Svg, { Path } from 'react-native-svg';
 import { View, TouchableOpacity, Image } from 'react-native';
 import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
@@ -7,11 +7,13 @@ import { COLORS, icons } from "../constants";
 import Home from '../screens/Home';
 import Profile from '../screens/Profile';
 import Liked from '../screens/Liked';
+import Animated from 'react-native-reanimated';
+import { duration } from 'moment';
 
 const TabBarCustomButton = ({ accessibilityState, children, onPress }) => {
 
     var isSelected = accessibilityState.selected
-
+    
     if (isSelected) {
         return (
             <View style={{ flex: 1, alignItems: "center" }}>
