@@ -7,8 +7,6 @@ import { COLORS, icons } from "../constants";
 import Home from '../screens/Home';
 import Profile from '../screens/Profile';
 import Liked from '../screens/Liked';
-import Animated from 'react-native-reanimated';
-import { duration } from 'moment';
 
 const TabBarCustomButton = ({ accessibilityState, children, onPress }) => {
 
@@ -95,7 +93,7 @@ const BottomTabNavigator = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image
-                            source={icons.cutlery}
+                            source={icons.home}
                             resizeMode="contain"
                             style={{
                                 width: 25,

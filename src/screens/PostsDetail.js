@@ -190,11 +190,13 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
         backgroundColor: COLORS.gray,
         // marginTop: 5,
-        height: 60,
+        height: 5,
         alignItems: 'center',
         position: 'absolute',
         bottom: 20,
-        width: '100%'
+        width: '100%',
+        flex: 1,
+        
     },
     cmtInput: {
         backgroundColor: COLORS.white, 
@@ -202,9 +204,11 @@ const styles = StyleSheet.create({
         marginLeft: '-5%', 
         paddingHorizontal:'5%', 
         paddingVertical: 10, 
-        height: 50, 
+        height: 65, 
         flexDirection: 'row',
         alignItems: 'center',
+        borderTopWidth: 1,
+        borderTopColor: '#B0A8B9',
     },
     avatar: {
         width: 40,

@@ -98,7 +98,7 @@ const Catagory = ({setSelectedCategory, selectedCategory}) => {
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={item => `${item.id}`}
                 renderItem={renderItem}
-                contentContainerStyle={{ paddingVertical: SIZES.padding * 2 }}
+                contentContainerStyle={{ paddingVertical: SIZES.padding }}
             />
         </View>
     )

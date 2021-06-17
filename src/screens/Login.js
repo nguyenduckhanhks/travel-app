@@ -6,8 +6,8 @@ import { COLORS, FONTS } from '../constants';
 import * as firebase from 'firebase'
 
 const Login = ({navigation}) => {
-    const [email, setEmail] = useState('user1@gmail.com')
-    const [password, setPassword] = useState('111111')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged(user => {
@@ -18,7 +18,9 @@ const Login = ({navigation}) => {
     const onLogin = () => {
         firebase.auth().signInWithEmailAndPassword(email, password)
         .then((res) => {
-            navigation.navigate('Home')
+            if(res){
+                return navigation.navigate('Home')
+            }
         })
         .catch(error => {
             Alert.alert('Email hoặc mật khẩu không chính xác!')
