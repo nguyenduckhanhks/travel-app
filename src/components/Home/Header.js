@@ -3,10 +3,11 @@ import { View, TouchableOpacity, Image, Text} from 'react-native';
 import { icons, SIZES, COLORS, FONTS } from '../../constants';
 
 const initialCurrentLocation = {
-    streetName: "Kuching",
+    streetName: "Hà Nội",
     gps: {
-        latitude: 1.5496614931250685,
-        longitude: 110.36381866919922
+        
+        latitude: 21.025762,
+        longitude: 105.852142
     }
 }
 
@@ -21,9 +22,10 @@ const Header = ({navigation}) => {
                     paddingLeft: SIZES.padding * 2,
                     justifyContent: 'center'
                 }}
+                onPress={() => navigation.navigate('NewPost')}
             >
                 <Image
-                    source={icons.nearby}
+                    source={icons.post}
                     resizeMode="contain"
                     style={{
                         width: 30,
@@ -31,7 +33,7 @@ const Header = ({navigation}) => {
                     }}
                 />
             </TouchableOpacity>
-
+            
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <View
                     style={{
@@ -46,17 +48,15 @@ const Header = ({navigation}) => {
                     <Text style={{ ...FONTS.h3 }}>{currentLocation.streetName}</Text>
                 </View>
             </View>
-
             <TouchableOpacity
                 style={{
                     width: 50,
-                    paddingRight: SIZES.padding * 2,
+                    
                     justifyContent: 'center'
                 }}
-                onPress={() => navigation.navigate('NewPost')}
             >
                 <Image
-                    source={icons.plus}
+                    source={icons.nearby}
                     resizeMode="contain"
                     style={{
                         width: 30,
@@ -64,6 +64,8 @@ const Header = ({navigation}) => {
                     }}
                 />
             </TouchableOpacity>
+
+            
         </View>
     )
 }

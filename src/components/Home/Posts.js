@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FlatList, View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
+import { FlatList, View, TouchableOpacity, Image, Text, StyleSheet, Dimensions } from 'react-native';
 import firebase from 'firebase/app'
 import { SIZES, COLORS, FONTS, icons } from '../../constants';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -215,7 +215,7 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
                 </View>
             </View>
 
-            {/* Restaurant Info */}
+            {/*Info */}
             <Text style={{ ...FONTS.body2 }}>{item.name}</Text>
 
             <TouchableOpacity onPress={() => navigation.navigate("Map", {
@@ -270,8 +270,11 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
                         style={{
                             width: '40%',
                             marginLeft: '30%',
-                            marginBottom: 20,
-                            marginTop: 50
+                            marginBottom: 200,
+                            marginTop: 50,
+                            paddingBottom:100,
+                            
+                            
                         }}
                         onPress={() => getAllListPost()}
                     >
@@ -300,7 +303,7 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
                 renderItem={renderItem}
                 contentContainerStyle={{
                     paddingHorizontal: SIZES.padding * 2,
-                    paddingBottom: 30,
+                    paddingBottom:100
                 }}
             />
         </View>

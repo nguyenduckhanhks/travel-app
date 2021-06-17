@@ -7,6 +7,7 @@ export const fire = require("../../assets/icons/fire.png");
 export const fries = require("../../assets/icons/fries.png");
 export const hamburger = require("../../assets/icons/hamburger.png");
 export const hotdog = require("../../assets/icons/hotdog.png");
+export const home = require("../../assets/icons/home.png");
 export const like = require("../../assets/icons/like.png");
 export const list = require("../../assets/icons/list.png");
 export const location = require("../../assets/icons/location.png");
@@ -28,7 +29,7 @@ export const instagram = require("../../assets/icons/instagram.png");
 export const image = require("../../assets/icons/image.png");
 export const world = require("../../assets/icons/world.png");
 export const logout = require("../../assets/icons/logout.png");
-
+export const post = require("../../assets/icons/post.png");
 export default {
     back,
     car,
@@ -39,6 +40,7 @@ export default {
     fries,
     hamburger,
     hotdog,
+    home,
     like,
     list,
     location,
@@ -59,5 +61,6 @@ export default {
     instagram,
     image,
     world,
-    logout
+    logout,
+    post
 }
