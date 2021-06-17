@@ -143,7 +143,7 @@ const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike, listCmt, onO
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     {/* Name */}
                     <Text style={{ ...FONTS.h3 }}>{postData.name}</Text>
-                    <TouchableOpacity style={{marginLeft: 10}}>
+                    <TouchableOpacity style={{marginLeft: 10}} onPress ={() => getUserLocation(postData['lat'], postData['long'])}>
                         <Icon name="navigate" size={30} color={COLORS.primary}/>
                     </TouchableOpacity>
                 </View>
@@ -155,7 +155,7 @@ const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike, listCmt, onO
                         flexDirection: 'row'
                     }}
                 >
-                    <TouchableOpacity activeOpacity={0.5} onPress ={() => getUserLocation(postData['lat'], postData['long'])}>
+                    {/* <TouchableOpacity activeOpacity={0.5} onPress ={() => getUserLocation(postData['lat'], postData['long'])}>
                         <Image
                             source={icons.location}
                             style={{
@@ -166,7 +166,7 @@ const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike, listCmt, onO
                             }}
                         />
                         <Text>Get Direction</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <Text style={{...FONTS.body4}}>{postData['address']}</Text>
                 </View>
 
