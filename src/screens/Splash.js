@@ -38,7 +38,7 @@ export default function Splash({ navigation }) {
     }, [moveAnim, fadeAnim]);
     useEffect(() => {
         setTimeout(()=>{
-            return navigation.navigate('Home') 
+            return navigation.navigate('Login') 
         },2500)
         
     },[])

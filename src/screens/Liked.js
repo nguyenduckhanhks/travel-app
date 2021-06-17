@@ -81,11 +81,12 @@ const Liked = ({ navigation }) => {
             {/* Admin */}
             {
                 uidLoginData && uidLoginData['type'] == 'admin' &&
-                <View style={{ flexDirection: 'row', marginVertical: 20 }}>
+                <View style={{ flexDirection: 'column', marginVertical: 20 }}>
                     <TouchableOpacity
                         style={{
                             width: '98%',
-                            marginLeft: '2%'
+                            marginLeft: '2%',
+                            marginBottom: 10
                         }}
                         onPress={() => setMode('liked')}
                     >
@@ -103,7 +104,8 @@ const Liked = ({ navigation }) => {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={{
-                            width: '48%',
+                            width: '98%',
+                            paddingLeft: SIZES.padding,
                             marginRight: '2%'
                         }}
                         onPress={() => setMode('admin')}

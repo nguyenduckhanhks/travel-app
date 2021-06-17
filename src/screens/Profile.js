@@ -146,8 +146,9 @@ const Profile = ({navigation}) => {
     }
 
     const logout = () => {
+        // navigation.popToTop();
         firebase.auth().signOut().then(() => {
-            navigation.navigate('Login')
+            // navigation.navigate('Login')
         })
     }
 
