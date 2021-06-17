@@ -113,7 +113,7 @@ const NewPost = ({navigation}) => {
         
                 firebase.firestore()
                         .collection('places')
-                        .doc(newPlace[id])
+                        .doc(newPlace['id'])
                         .set(newPlace)
                         .then(res => {
                             navigation.navigate('Home')
