@@ -1,11 +1,48 @@
 import React from 'react';
-import { Animated, View, Image, Text, StyleSheet, TouchableOpacity, Alert, ScrollView} from 'react-native';
+import {
+    Animated,
+    View,
+    Image,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    Alert,
+    ScrollView,
+    Button,
+    Linking
+} from 'react-native';
 import { SIZES, COLORS, FONTS, icons, images } from '../../constants';
 import Icon from 'react-native-vector-icons/Ionicons';
-import firebase from 'firebase/app'
+import firebase from 'firebase/app';
+import MapView from "react-native-maps";
+import * as Permissions from 'expo-permissions';
+import * as Location from "expo-location";
+
 
 const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike, listCmt, onOpenCmt}) => {
+    const state = {
+        latitude: null,
+        longitude: null
+    }
 
+    const getUserLocation = async (desLatitude, desLongitude) => {
+        const {status} = await Permissions.getAsync(Permissions.LOCATION);
+        if (status !== 'granted') {
+            const response = await Permissions.askAsync(Permissions.LOCATION)
+        }
+        let location = await Location.getCurrentPositionAsync();
+        state.latitude = location.coords.latitude;
+        state.longitude = location.coords.longitude;
+        Linking.openURL(`https://www.google.com/maps/dir/?api=1&origin=` +
+            location.coords.latitude +
+            `,` +
+            location.coords.longitude +
+            `&destination=` +
+            desLatitude +
+            ',' +
+            desLongitude +
+            `&travelmode=driving`);
+    }
     const onLike = () => {
         firebase.firestore()
                 .collection('likes')
@@ -69,7 +106,6 @@ const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike, listCmt, onO
                 paddingHorizontal: 20
             }}
         >
-
             <ScrollView
                 showsVerticalScrollIndicator={false}
             >
@@ -107,7 +143,7 @@ const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike, listCmt, onO
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     {/* Name */}
                     <Text style={{ ...FONTS.h3 }}>{postData.name}</Text>
-                    <TouchableOpacity style={{marginLeft: 10}}>
+                    <TouchableOpacity style={{marginLeft: 10}} onPress ={() => getUserLocation(postData['lat'], postData['long'])}>
                         <Icon name="navigate" size={30} color={COLORS.primary}/>
                     </TouchableOpacity>
                 </View>
@@ -119,15 +155,18 @@ const PostInfo = ({postData, authData, isLike, uidLogin, setIsLike, listCmt, onO
                         flexDirection: 'row'
                     }}
                 >
-                    <Image
-                        source={icons.location}
-                        style={{
-                            height: 20,
-                            width: 20,
-                            tintColor: COLORS.primary,
-                            marginRight: 10
-                        }}
-                    />
+                    {/* <TouchableOpacity activeOpacity={0.5} onPress ={() => getUserLocation(postData['lat'], postData['long'])}>
+                        <Image
+                            source={icons.location}
+                            style={{
+                                height: 20,
+                                width: 20,
+                                tintColor: COLORS.primary,
+                                marginRight: 10
+                            }}
+                        />
+                        <Text>Get Direction</Text>
+                    </TouchableOpacity> */}
                     <Text style={{...FONTS.body4}}>{postData['address']}</Text>
                 </View>
 
@@ -202,6 +241,9 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: 10,
         width: 'auto'
+    },
+    map: {
+        height: '25%',
     },
     textBg: {
         alignSelf:'flex-start', 

@@ -218,6 +218,15 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
             {/* Restaurant Info */}
             <Text style={{ ...FONTS.body2 }}>{item.name}</Text>
 
+            <TouchableOpacity onPress={() => navigation.navigate("Map", {
+                latitude: item.lat,
+                longitude: item.long,
+                name: item.name,
+                description: item.description
+            })} >
+                <Text style={{color: '#000', fontSize: 20 }}>Show on map</Text>
+            </TouchableOpacity>
+
             <View
                 style={{
                     marginTop: SIZES.padding,
