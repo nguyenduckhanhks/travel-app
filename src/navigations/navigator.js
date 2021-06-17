@@ -1,6 +1,7 @@
 import React from 'react'
 import { createStackNavigator } from "@react-navigation/stack";
 
+import Splash from '../screens/Splash';
 import BottomTabNavigator from './bottomTabNavigator';
 import Login from '../screens/Login';
 import Signup from '../screens/Signup';
@@ -17,8 +18,9 @@ const StackNavigator = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName={'Login'}
+            initialRouteName={'Splash'}
         >
+            <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Home" component={BottomTabNavigator} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Signup" component={Signup} />

@@ -43,7 +43,7 @@ const Catagory = ({setSelectedCategory, selectedCategory}) => {
             <TouchableOpacity
                 style={{
                     padding: SIZES.padding,
-                    paddingBottom: SIZES.padding * 2,
+                    paddingBottom: SIZES.padding,
                     backgroundColor: (selectedCategory == item.id) ? COLORS.primary : COLORS.white,
                     borderRadius: SIZES.radius,
                     alignItems: "center",
@@ -90,8 +90,7 @@ const Catagory = ({setSelectedCategory, selectedCategory}) => {
 
     return (
         <View style={{ padding: SIZES.padding * 2}}>
-            <Text style={{ ...FONTS.h1 }}>Main</Text>
-            <Text style={{ ...FONTS.h1 }}>Categories</Text>
+            <Text style={{ ...FONTS.h1 }}>Danh Mục</Text>
 
             <FlatList
                 data={listCatagories}

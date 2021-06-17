@@ -16,6 +16,7 @@ export const COLORS = {
     lightGray4: "#F8F8F9",
     transparent: "transparent",
     darkgray: '#898C95',
+    blue: "#66C7F4",
 };
 
 export const SIZES = {

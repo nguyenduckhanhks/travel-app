@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {FlatList, View, TouchableOpacity, Image, Text, StyleSheet} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { FlatList, View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
 import firebase from 'firebase/app'
 import { SIZES, COLORS, FONTS, icons } from '../../constants';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -8,26 +8,26 @@ import { LinearGradient } from 'expo-linear-gradient';
 const usePrevious = (value) => {
     const ref = useRef();
     useEffect(() => {
-      ref.current = value;
+        ref.current = value;
     });
     return ref.current;
 }
 
-const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=true, isMyPost=false, isLiked=false, selectedCategory, searchText}) => {
+const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAll = true, isMyPost = false, isLiked = false, selectedCategory, searchText,title }) => {
     const [uidLogin, setUidLogin] = useState('')
     const prevCata = usePrevious(selectedCategory)
     const preTextSearch = usePrevious(searchText)
 
     useEffect(() => {
-        if(prevCata != selectedCategory || preTextSearch != searchText) {
+        if (prevCata != selectedCategory || preTextSearch != searchText) {
             setListPost([])
             setLastPost(null)
         }
     }, [selectedCategory, searchText])
-    
+
     useEffect(() => {
         firebase.auth().onAuthStateChanged(user => {
-            if(!user) return navigation.navigate('Login')
+            if (!user) return navigation.navigate('Login')
             let uidLogin = user['uid']
             setUidLogin(uidLogin)
         })
@@ -35,110 +35,110 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
     }, [uidLogin, selectedCategory, searchText])
 
     const getAllListPost = () => {
-        if(!uidLogin) return
-        if(isMyPost) {
-            if(!lastPost) {
+        if (!uidLogin) return
+        if (isMyPost) {
+            if (!lastPost) {
                 firebase.firestore()
-                        .collection('places')
-                        .where('auth', '==', uidLogin)
-                        .where('status', '==', 'active')
-                        .limit(1)
-                        .onSnapshot(snaps => {
-                            setLastPost(snaps.docs[snaps.docs.length - 1])
-                            let tmpList = snaps.docs.map(doc => {
-                                return {
-                                    idDoc: doc.id,
-                                    ...doc.data()
-                                }
-                            })
-                            setListPost(tmpList)
+                    .collection('places')
+                    .where('auth', '==', uidLogin)
+                    .where('status', '==', 'active')
+                    .limit(1)
+                    .onSnapshot(snaps => {
+                        setLastPost(snaps.docs[snaps.docs.length - 1])
+                        let tmpList = snaps.docs.map(doc => {
+                            return {
+                                idDoc: doc.id,
+                                ...doc.data()
+                            }
                         })
+                        setListPost(tmpList)
+                    })
             } else {
                 firebase.firestore()
-                        .collection('places')
-                        .where('auth', '==', uidLogin)
-                        .where('status', '==', 'active')
-                        .startAfter(lastPost)
-                        .limit(1)
-                        .onSnapshot(snaps => {
-                            if(snaps.docs.length > 0) {
-                                setLastPost(snaps.docs[snaps.docs.length - 1])
+                    .collection('places')
+                    .where('auth', '==', uidLogin)
+                    .where('status', '==', 'active')
+                    .startAfter(lastPost)
+                    .limit(1)
+                    .onSnapshot(snaps => {
+                        if (snaps.docs.length > 0) {
+                            setLastPost(snaps.docs[snaps.docs.length - 1])
+                        }
+                        let tmpList = snaps.docs.map(doc => {
+                            return {
+                                idDoc: doc.id,
+                                ...doc.data()
                             }
-                            let tmpList = snaps.docs.map(doc => {
-                                return {
-                                    idDoc: doc.id,
-                                    ...doc.data()
-                                }
-                            })
-                            setListPost([
-                                ...listPost,
-                                ...tmpList
-                            ])
                         })
+                        setListPost([
+                            ...listPost,
+                            ...tmpList
+                        ])
+                    })
             }
         }
-        if(getAll) {
-            if(!lastPost || prevCata != selectedCategory || preTextSearch != searchText) {
+        if (getAll) {
+            if (!lastPost || prevCata != selectedCategory || preTextSearch != searchText) {
                 let ft = firebase.firestore()
-                        .collection('places')
-                        .where('status', '==', 'active')
+                    .collection('places')
+                    .where('status', '==', 'active')
 
-                if(selectedCategory != 'all') {
+                if (selectedCategory != 'all') {
                     ft = ft.where('catagory.id', '==', selectedCategory)
                 }
 
-                if(searchText != '') {
+                if (searchText != '') {
                     ft = ft.where('name', '>=', searchText)
-                            .where('name', '<=', searchText + '\uf8ff')
+                        .where('name', '<=', searchText + '\uf8ff')
                 }
-                        
-                        ft.limit(1)
-                        .onSnapshot(snaps => {
-                            setLastPost(snaps.docs[snaps.docs.length - 1])
-                            let tmpList = snaps.docs.map(doc => {
-                                return {
-                                    idDoc: doc.id,
-                                    ...doc.data()
-                                }
-                            })
-                            setListPost(tmpList)
+
+                ft.limit(1)
+                    .onSnapshot(snaps => {
+                        setLastPost(snaps.docs[snaps.docs.length - 1])
+                        let tmpList = snaps.docs.map(doc => {
+                            return {
+                                idDoc: doc.id,
+                                ...doc.data()
+                            }
                         })
+                        setListPost(tmpList)
+                    })
             } else {
                 let ft = firebase.firestore()
-                        .collection('places')
-                        .where('status', '==', 'active')
+                    .collection('places')
+                    .where('status', '==', 'active')
 
-                if(selectedCategory != 'all') {
+                if (selectedCategory != 'all') {
                     ft = ft.where('catagory.id', '==', selectedCategory)
                 }
 
-                if(searchText != '') {
+                if (searchText != '') {
                     ft = ft.where('name', '>=', searchText)
-                            .where('name', '<=', searchText + '\uf8ff')
+                        .where('name', '<=', searchText + '\uf8ff')
                 }
 
-                        ft.startAfter(lastPost)
-                        .limit(1)
-                        .onSnapshot(snaps => {
-                            if(snaps.docs.length > 0) {
-                                setLastPost(snaps.docs[snaps.docs.length - 1])
+                ft.startAfter(lastPost)
+                    .limit(1)
+                    .onSnapshot(snaps => {
+                        if (snaps.docs.length > 0) {
+                            setLastPost(snaps.docs[snaps.docs.length - 1])
+                        }
+                        let tmpList = snaps.docs.map(doc => {
+                            return {
+                                idDoc: doc.id,
+                                ...doc.data()
                             }
-                            let tmpList = snaps.docs.map(doc => {
-                                return {
-                                    idDoc: doc.id,
-                                    ...doc.data()
-                                }
-                            })
-                            setListPost([
-                                ...listPost,
-                                ...tmpList
-                            ])
                         })
+                        setListPost([
+                            ...listPost,
+                            ...tmpList
+                        ])
+                    })
             }
         }
 
-        if(isLiked) {
-            if(!lastPost) {
+        if (isLiked) {
+            if (!lastPost) {
                 firebase.firestore()
                     .collection('likes')
                     .where('uid', '==', uidLogin)
@@ -146,69 +146,31 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
                     .onSnapshot(snaps => {
                         // setLastPost(snaps.docs[snaps.docs.length - 1])
                         snaps.docs.forEach(doc => {
-                            if(doc.data()['uid'] == uidLogin) {
+                            if (doc.data()['uid'] == uidLogin) {
                                 let listPosts = doc.data()['listPost']
                                 let result = []
                                 listPosts.forEach(post => {
                                     firebase.firestore()
-                                    .collection('places')
-                                    .where('id', '==', post)
-                                    .where('status', '==', 'active')
-                                    .onSnapshot(snapshot => {
-                                        snapshot.docs.forEach(element => {
-                                            if(element.data()['id'] == post) {
-                                                result.push({
-                                                    idDoc: element.id,
-                                                    ...element.data()
-                                                })
-                                                setListPost(result)
-                                            }
-                                        });
-                                    })
+                                        .collection('places')
+                                        .where('id', '==', post)
+                                        .where('status', '==', 'active')
+                                        .onSnapshot(snapshot => {
+                                            snapshot.docs.forEach(element => {
+                                                if (element.data()['id'] == post) {
+                                                    result.push({
+                                                        idDoc: element.id,
+                                                        ...element.data()
+                                                    })
+                                                    setListPost(result)
+                                                }
+                                            });
+                                        })
                                 })
                             }
                         })
                     })
-            } 
-            // else {
-            //     firebase.firestore()
-            //         .collection('likes')
-            //         .where('uid', '==', uidLogin)
-            //         .startAfter(lastPost)
-            //         .limit(1)
-            //         .onSnapshot(snaps => {
-            //             if(snaps.docs.length > 0) {
-            //                 setLastPost(snaps.docs[snaps.docs.length - 1])
-            //             }
-            //             snaps.docs.forEach(doc => {
-            //                 if(doc.data()['uid'] == uidLogin) {
-            //                     let listPosts = doc.data()['listPost']
-            //                     let result = []
-            //                     listPosts.forEach(post => {
-            //                         firebase.firestore()
-            //                         .collection('places')
-            //                         .where('id', '==', post)
-            //                         .where('status', '==', 'active')
-            //                         .onSnapshot(snapshot => {
-            //                             snapshot.docs.forEach(element => {
-            //                                 if(element.data()['id'] == post) {
-            //                                     result.push({
-            //                                         idDoc: element.id,
-            //                                         ...element.data()
-            //                                     })
-            //                                     // setListPost(result)
-            //                                     setListPost([
-            //                                         ...listPost,
-            //                                         ...result
-            //                                     ])
-            //                                 }
-            //                             });
-            //                         })
-            //                     })
-            //                 }
-            //             })
-            //         })
-            // }
+            }
+
         }
     }
 
@@ -226,7 +188,7 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
                 }}
             >
                 <Image
-                    source={item && item.image ? {uri: item.image} : icons.image}
+                    source={item && item.image ? { uri: item.image } : icons.image}
                     resizeMode="cover"
                     style={{
                         width: "100%",
@@ -272,10 +234,6 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
                     alignItems: 'center'
                 }}
             >
-                {/* 
-                heart
-                <Icon style={{marginRight: 5}} name="heart" size={20} color={COLORS.primary}/>
-                <Text style={{ ...FONTS.body3 }}>{item.countLike > 0 ? item.countLike : ''}</Text> */}
 
                 {/* Categories */}
                 <View
@@ -306,9 +264,9 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
                 />
             </View>
             {
-                listPost.indexOf(item) == listPost.length - 1 && 
+                listPost.indexOf(item) == listPost.length - 1 &&
                 <View>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={{
                             width: '40%',
                             marginLeft: '30%',
@@ -317,15 +275,15 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
                         }}
                         onPress={() => getAllListPost()}
                     >
-                        <LinearGradient colors={[COLORS.primary, COLORS.primary]} 
+                        <LinearGradient colors={[COLORS.primary, COLORS.primary]}
                             style={{
                                 paddingVertical: 10,
                                 backgroundColor: COLORS.white,
-                                borderRadius:  20,
+                                borderRadius: 20,
                                 alignItems: 'center',
                             }}
                         >
-                            <Text style={{...FONTS.body3, color: COLORS.white}}>Xem thêm</Text>
+                            <Text style={{ ...FONTS.body3, color: COLORS.white }}>Xem thêm</Text>
                         </LinearGradient>
                     </TouchableOpacity>
                 </View>
@@ -334,15 +292,19 @@ const Posts = ({navigation, listPost, setListPost, lastPost, setLastPost,getAll=
     )
 
     return (
-        <FlatList
-            data={listPost}
-            keyExtractor={item => `${item.id}`}
-            renderItem={renderItem}
-            contentContainerStyle={{
-                paddingHorizontal: SIZES.padding * 2,
-                paddingBottom: 30
-            }}
-        />
+        <View>
+            <Text style={{paddingHorizontal: SIZES.padding * 2,...FONTS.h2}}>{title}</Text>
+            <FlatList
+                data={listPost}
+                keyExtractor={item => `${item.id}`}
+                renderItem={renderItem}
+                contentContainerStyle={{
+                    paddingHorizontal: SIZES.padding * 2,
+                    paddingBottom: 30,
+                }}
+            />
+        </View>
+
     )
 }
 
@@ -362,6 +324,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: 1,
     }
+
 })
 
 export default Posts;

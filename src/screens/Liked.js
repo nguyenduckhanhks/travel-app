@@ -1,13 +1,13 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, TouchableOpacity, Image} from 'react-native';
-import {COLORS, icons, SIZES, FONTS, images} from '../constants';
+import React, { useState, useEffect } from 'react';
+import { View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { COLORS, icons, SIZES, FONTS, images } from '../constants';
 import Posts from '../components/Home/Posts';
 import { LinearGradient } from 'expo-linear-gradient';
 import firebase from 'firebase/app'
 import ApprovalPost from '../components/Admin/ApprovalPost';
 import ManageMyPost from '../components/Admin/ManageMyPost';
 
-const Liked = ({navigation}) => {
+const Liked = ({ navigation }) => {
     const [uidLogin, setUidLogin] = useState('')
     const [uidLoginData, setUIdLoginData] = useState(null)
     const [listPost, setListPost] = useState([])
@@ -16,25 +16,25 @@ const Liked = ({navigation}) => {
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged(user => {
-            if(!user) return navigation.navigate('Login')
+            if (!user) return navigation.navigate('Login')
             let uidLogin = user['uid']
             setUidLogin(uidLogin)
         })
     }, [uidLogin])
 
     useEffect(() => {
-        if(!uidLogin) return
+        if (!uidLogin) return
         firebase.firestore()
-                .collection('users')
-                .doc(uidLogin)
-                .onSnapshot(doc => {
-                    if(doc && doc.data())
-                        setUIdLoginData(doc.data())
-                })
+            .collection('users')
+            .doc(uidLogin)
+            .onSnapshot(doc => {
+                if (doc && doc.data())
+                    setUIdLoginData(doc.data())
+            })
     }, [uidLogin])
 
     return (
-        <SafeAreaView style={{backgroundColor: COLORS.lightGray4, flex: 1,}}>
+        <SafeAreaView style={{ backgroundColor: COLORS.lightGray4, flex: 1, }}>
             <View style={{ flexDirection: 'row', height: 50 }}>
                 <TouchableOpacity
                     style={{
@@ -80,44 +80,44 @@ const Liked = ({navigation}) => {
 
             {/* Admin */}
             {
-                uidLoginData && uidLoginData['type'] == 'admin' && 
-                <View style={{flexDirection: 'row', marginVertical: 20}}>
-                    <TouchableOpacity 
+                uidLoginData && uidLoginData['type'] == 'admin' &&
+                <View style={{ flexDirection: 'row', marginVertical: 20 }}>
+                    <TouchableOpacity
                         style={{
-                            width: '48%',
+                            width: '98%',
                             marginLeft: '2%'
                         }}
                         onPress={() => setMode('liked')}
                     >
-                        <LinearGradient colors={mode == 'liked' ? [COLORS.primary, COLORS.primary] : [COLORS.darkgray,COLORS.darkgray]} 
+                        <LinearGradient colors={mode == 'liked' ? [COLORS.primary, COLORS.primary] : [COLORS.darkgray, COLORS.darkgray]}
                             style={{
                                 paddingVertical: 15,
                                 backgroundColor: COLORS.white,
-                                borderRadius:  20,
+                                borderRadius: 20,
                                 alignItems: 'center',
                                 marginRight: '2%'
                             }}
                         >
-                            <Text style={{...FONTS.h4, color: COLORS.white}}>Đã thích</Text>
+                            <Text style={{ ...FONTS.h4, color: COLORS.white }}>Đã thích</Text>
                         </LinearGradient>
                     </TouchableOpacity>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={{
                             width: '48%',
                             marginRight: '2%'
                         }}
                         onPress={() => setMode('admin')}
                     >
-                        <LinearGradient colors={mode == 'liked' ? [COLORS.darkgray,COLORS.darkgray] : [COLORS.primary, COLORS.primary]} 
+                        <LinearGradient colors={mode == 'liked' ? [COLORS.darkgray, COLORS.darkgray] : [COLORS.primary, COLORS.primary]}
                             style={{
                                 paddingVertical: 15,
                                 backgroundColor: COLORS.white,
-                                borderRadius:  20,
+                                borderRadius: 20,
                                 alignItems: 'center',
                                 marginRight: '2%'
                             }}
                         >
-                            <Text style={{...FONTS.h4, color: COLORS.white}}>Duyệt địa điểm</Text>
+                            <Text style={{ ...FONTS.h4, color: COLORS.white }}>Duyệt địa điểm</Text>
                         </LinearGradient>
                     </TouchableOpacity>
                 </View>
@@ -125,74 +125,76 @@ const Liked = ({navigation}) => {
 
             {/* user mode */}
             {
-                uidLoginData && uidLoginData['type'] == 'user' && 
+                uidLoginData && uidLoginData['type'] == 'user' &&
                 <View>
-                    <View style={{flexDirection: 'row', marginVertical: 20}}>
-                        <TouchableOpacity 
+                    <View style={{ flexDirection: 'column', marginVertical: 10 }}>
+                        <TouchableOpacity
                             style={{
-                                width: '48%',
-                                marginLeft: '2%'
+                                width: '98%',
+                                marginLeft: '2%', 
+                                
                             }}
                             onPress={() => setMode('waiting')}
                         >
-                            <LinearGradient colors={mode == 'waiting' ? [COLORS.primary, COLORS.primary] :  [COLORS.darkgray,COLORS.darkgray]} 
+                            <LinearGradient colors={mode == 'waiting' ? [COLORS.primary, COLORS.primary] : [COLORS.darkgray, COLORS.darkgray]}
                                 style={{
                                     paddingVertical: 15,
                                     backgroundColor: COLORS.white,
-                                    borderRadius:  20,
+                                    borderRadius: 20,
                                     alignItems: 'center',
                                     marginRight: '2%'
                                 }}
                             >
-                                <Text style={{...FONTS.h4, color: COLORS.white}}>Đang chờ duyệt</Text>
+                                <Text style={{ ...FONTS.h4, color: COLORS.white }}>Đang chờ duyệt</Text>
                             </LinearGradient>
                         </TouchableOpacity>
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             style={{
-                                width: '48%',
-                                marginRight: '2%'
+                                width: '98%',
+                                marginLeft: '2%',
+                                marginTop: 10
                             }}
                             onPress={() => setMode('reject')}
                         >
-                            <LinearGradient colors={mode == 'reject' ? [COLORS.primary, COLORS.primary] : [COLORS.darkgray,COLORS.darkgray] } 
+                            <LinearGradient colors={mode == 'reject' ? [COLORS.primary, COLORS.primary] : [COLORS.darkgray, COLORS.darkgray]}
                                 style={{
                                     paddingVertical: 15,
                                     backgroundColor: COLORS.white,
-                                    borderRadius:  20,
+                                    borderRadius: 20,
                                     alignItems: 'center',
                                     marginRight: '2%'
                                 }}
                             >
-                                <Text style={{...FONTS.h4, color: COLORS.white}}>Không được duyệt</Text>
+                                <Text style={{ ...FONTS.h4, color: COLORS.white }}>Không được duyệt</Text>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>
                     <View>
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             style={{
-                                width: '90%',
-                                marginLeft: '5%',
+                                width: '96%',
+                                marginLeft: '2%',
                                 marginBottom: 20
                             }}
                             onPress={() => setMode('liked')}
                         >
-                            <LinearGradient colors={mode == 'liked' ? [COLORS.primary, COLORS.primary] : [COLORS.darkgray,COLORS.darkgray]} 
+                            <LinearGradient colors={mode == 'liked' ? [COLORS.primary, COLORS.primary] : [COLORS.darkgray, COLORS.darkgray]}
                                 style={{
                                     paddingVertical: 15,
                                     backgroundColor: COLORS.white,
-                                    borderRadius:  20,
+                                    borderRadius: 20,
                                     alignItems: 'center',
                                 }}
                             >
-                                <Text style={{...FONTS.h4, color: COLORS.white}}>Đã thích</Text>
+                                <Text style={{ ...FONTS.h4, color: COLORS.white }}>Đã thích</Text>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>
                 </View>
             }
             {
-                mode == 'liked' && 
-                <Posts 
+                mode == 'liked' &&
+                <Posts
                     navigation={navigation}
                     listPost={listPost}
                     setListPost={setListPost}
@@ -203,22 +205,22 @@ const Liked = ({navigation}) => {
                 />
             }
             {
-                mode == 'admin' && 
-                <ApprovalPost 
+                mode == 'admin' &&
+                <ApprovalPost
                     navigation={navigation}
                 />
             }
             {
-                mode == 'waiting' && 
+                mode == 'waiting' &&
                 <ManageMyPost
-                    mode='waiting' 
+                    mode='waiting'
                     navigation={navigation}
                 />
             }
             {
-                mode == 'reject' && 
+                mode == 'reject' &&
                 <ManageMyPost
-                    mode='reject' 
+                    mode='reject'
                     navigation={navigation}
                 />
             }

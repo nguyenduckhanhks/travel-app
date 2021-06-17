@@ -40,7 +40,7 @@ const NewPost = ({navigation}) => {
           if (Platform.OS !== 'web') {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (status !== 'granted') {
-              alert('Sorry, we need camera roll permissions to make this work!');
+              alert('Xin lỗi, chúng tôi cần quyền sử dụng camera để thực hiện!');
             }
           }
         })();
@@ -250,7 +250,7 @@ const NewPost = ({navigation}) => {
                             />
                         </View>
 
-                        <Text style={styles.label}>Latitude</Text>
+                        <Text style={styles.label}>Vĩ độ (giá trị 1)</Text>
                         <View style={styles.inputSection}>
                             <TextInput
                                 style={styles.input}
@@ -259,7 +259,7 @@ const NewPost = ({navigation}) => {
                             />
                         </View>
 
-                        <Text style={styles.label}>Longitude</Text>
+                        <Text style={styles.label}>Kinh độ (giá trị 2)</Text>
                         <View style={styles.inputSection}>
                             <TextInput
                                 style={styles.input}
@@ -270,7 +270,7 @@ const NewPost = ({navigation}) => {
 
 
                         <TouchableOpacity style={{marginTop: 20}} onPress = {() => getGoogleMap()}>
-                            <Text style={{color: '#000' , fontSize: 15}}>Click here to get Latitude and Longitude in here(Tick on goole maps and copy the value of coordinates)</Text>
+                            <Text style={{color: COLORS.blue , fontSize: 15}}>Click vào đây để lấy Toạ độ (Tích vào địa điểm trên Google Maps và copy giá trị toạ độ)</Text>
                         </TouchableOpacity>
 
                         <Text style={styles.label}>Phí dịch vụ</Text>
