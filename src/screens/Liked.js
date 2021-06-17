@@ -116,7 +116,7 @@ const Liked = ({ navigation }) => {
                                 backgroundColor: COLORS.white,
                                 borderRadius: 20,
                                 alignItems: 'center',
-                                marginRight: '2%'
+                                
                             }}
                         >
                             <Text style={{ ...FONTS.h4, color: COLORS.white }}>Duyệt địa điểm</Text>
