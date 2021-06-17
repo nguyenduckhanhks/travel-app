@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Image, Text} from 'react-native';
 import { icons, SIZES, COLORS, FONTS } from '../../constants';
+import firebase from 'firebase/app'
 
 const initialCurrentLocation = {
     streetName: "Hà Nội",
@@ -13,6 +14,13 @@ const initialCurrentLocation = {
 
 const Header = ({navigation}) => {
     const [currentLocation, setCurrentLocation] = useState(initialCurrentLocation)
+
+    const logout = () => {
+        // navigation.popToTop();
+        firebase.auth().signOut().then(() => {
+            // navigation.navigate('Login')
+        })
+    }
 
     return (
         <View style={{ flexDirection: 'row', height: 50 }}>
@@ -54,9 +62,10 @@ const Header = ({navigation}) => {
                     
                     justifyContent: 'center'
                 }}
+                onPress={() => logout()}
             >
                 <Image
-                    source={icons.nearby}
+                    source={icons.logout}
                     resizeMode="contain"
                     style={{
                         width: 30,
