@@ -85,7 +85,7 @@ const NewPost = ({navigation}) => {
         if(!uidLogin) return Alert.alert('Vui lòng đăng nhập để sử dụng chức năng này')
         if(!listCatagories) return Alert.alert('Chưa có danh sách danh mục sản phẩm')
 
-        if(!image || !name || !address || !lat || !long || catagory < 0 || catagory == '' || !description || !cost)
+        if(!image || !name || !address || !lat || !long || catagory < 0 || catagory === '' || !description || !cost)
             return Alert.alert('Vui lòng nhập đầy đủ thông tin cần thiết!')
         setLoading(true)
 
