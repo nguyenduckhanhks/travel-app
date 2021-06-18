@@ -99,7 +99,7 @@ const Signup = ({navigation}) => {
                         navigation.navigate('ForgotPassword')
                     }}
                 >
-                    Forgot password?
+                    Quên mật khẩu?
                 </Text>
 
                 <TouchableOpacity 
@@ -119,7 +119,7 @@ const Signup = ({navigation}) => {
                             navigation.navigate('Login')
                         }}
                     >
-                        Login here
+                        Đăng nhập
                     </Text>
                 </View>
             </View>

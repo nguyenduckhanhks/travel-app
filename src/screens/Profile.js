@@ -148,7 +148,7 @@ const Profile = ({navigation}) => {
     const logout = () => {
         // navigation.popToTop();
         firebase.auth().signOut().then(() => {
-            // navigation.navigate('Login')
+            //navigation.navigate('Login')
         })
     }
 
@@ -278,7 +278,7 @@ const Profile = ({navigation}) => {
                                     height: 25,
                                     marginRight: 5
                                 }}/>
-                            <Text>Post</Text>
+                            <Text>Bài viết</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -293,7 +293,7 @@ const Profile = ({navigation}) => {
                                     height: 25,
                                     marginRight: 5
                                 }}/>
-                            <Text>Image</Text>
+                            <Text>Ảnh đã tải</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -308,7 +308,7 @@ const Profile = ({navigation}) => {
                                     height: 25,
                                     marginRight: 5
                                 }}/>
-                            <Text>User</Text>
+                            <Text>Sửa thông tin</Text>
                         </TouchableOpacity>
                     </View>
                     
@@ -390,7 +390,7 @@ const Profile = ({navigation}) => {
                                             height: 25,
                                             marginRight: 5
                                         }}/>
-                                    <Text>Post</Text>
+                                    <Text>Bài viết</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
@@ -405,7 +405,7 @@ const Profile = ({navigation}) => {
                                             height: 25,
                                             marginRight: 5
                                         }}/>
-                                    <Text>Image</Text>
+                                    <Text>Ảnh đã tải</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
@@ -421,7 +421,7 @@ const Profile = ({navigation}) => {
                                             marginRight: 5
                                         }}
                                     />
-                                    <Text>User</Text>
+                                    <Text>Sửa thông tin</Text>
                                 </TouchableOpacity>
                             </View>
                             
@@ -501,6 +501,7 @@ const styles = StyleSheet.create({
         width: '100%', 
         borderBottomColor: '#F0F0F0',
         borderBottomWidth: 2,
+        marginTop: 8,
     },
     menuItem: {
         flexDirection: 'row', 

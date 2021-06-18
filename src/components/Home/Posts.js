@@ -216,7 +216,7 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
             </View>
 
             {/*Info */}
-            <Text style={{ ...FONTS.body2 }}>{item.name}</Text>
+            <Text style={{ ...FONTS.h3 }}>{item.name}</Text>
 
             <TouchableOpacity onPress={() => navigation.navigate("Map", {
                 latitude: item.lat,
@@ -224,12 +224,11 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
                 name: item.name,
                 description: item.description
             })} >
-                <Text style={{color: '#000', fontSize: 20 }}>Show on map</Text>
+                <Text style={{color: '#888', ...FONTS.h4 }}>Chỉ đường</Text>
             </TouchableOpacity>
 
             <View
                 style={{
-                    marginTop: SIZES.padding,
                     flexDirection: 'row',
                     alignItems: 'center'
                 }}
@@ -239,7 +238,6 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
                 <View
                     style={{
                         flexDirection: 'row',
-                        marginLeft: 5
                     }}
                 >
                     <View

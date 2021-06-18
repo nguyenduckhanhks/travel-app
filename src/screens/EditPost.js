@@ -270,7 +270,7 @@ const EditPost = ({navigation, route}) => {
                             borderRadius: SIZES.radius
                         }}
                     >
-                        <Text style={{ ...FONTS.h3 }}>Thêm địa điểm</Text>
+                        <Text style={{ ...FONTS.h3 }}>Sửa thông tin</Text>
                     </View>
                 </View>
                 

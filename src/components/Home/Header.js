@@ -16,9 +16,9 @@ const Header = ({navigation}) => {
     const [currentLocation, setCurrentLocation] = useState(initialCurrentLocation)
 
     const logout = () => {
-        // navigation.popToTop();
+        navigation.navigate('Login')
         firebase.auth().signOut().then(() => {
-            // navigation.navigate('Login')
+            
         })
     }
 

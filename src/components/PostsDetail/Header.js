@@ -38,7 +38,7 @@ const Header = ({navigation, postDataName, isMyPost, postId, postIdDoc}) => {
                 style={{
                     width: 50,
                     paddingLeft: SIZES.padding * 2,
-                    justifyContent: 'center'
+                    justifyContent: 'center',
                 }}
                 onPress={() => navigation.goBack()}
             >
@@ -67,10 +67,11 @@ const Header = ({navigation, postDataName, isMyPost, postId, postIdDoc}) => {
                         justifyContent: 'center',
                         paddingHorizontal: SIZES.padding * 3,
                         borderRadius: SIZES.radius,
-                        backgroundColor: COLORS.lightGray3
+                        backgroundColor: COLORS.lightGray3,
+                        
                     }}
                 >
-                    <Text style={{ ...FONTS.h3 }}>{postDataName}</Text>
+                    <Text style={{ textAlign:'center',...FONTS.h3 }}>{postDataName}</Text>
                 </View>
             </View>
 

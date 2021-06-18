@@ -19,7 +19,7 @@ const Login = ({navigation}) => {
         firebase.auth().signInWithEmailAndPassword(email, password)
         .then((res) => {
             if(res){
-                return navigation.navigate('Home')
+                return navigation.navigate('Home') 
             }
         })
         .catch(error => {
@@ -79,7 +79,7 @@ const Login = ({navigation}) => {
                             navigation.navigate('Signup')
                         }}
                     >
-                        Sign up here
+                        Đăng ký ở đây
                     </Text>
                 </View>
             </View>
