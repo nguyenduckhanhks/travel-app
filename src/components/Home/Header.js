@@ -14,7 +14,6 @@ const initialCurrentLocation = {
 
 const Header = ({navigation}) => {
     const [currentLocation, setCurrentLocation] = useState(initialCurrentLocation)
-
     const logout = () => {
         navigation.navigate('Login')
         firebase.auth().signOut().then(() => {
@@ -30,7 +29,7 @@ const Header = ({navigation}) => {
                     paddingLeft: SIZES.padding * 2,
                     justifyContent: 'center'
                 }}
-                onPress={() => navigation.navigate('NewPost')}
+                onPress={logout}
             >
                 <Image
                     source={icons.post}
@@ -62,7 +61,7 @@ const Header = ({navigation}) => {
                     
                     justifyContent: 'center'
                 }}
-                onPress={() => logout()}
+                onPress={logout}
             >
                 <Image
                     source={icons.logout}
