@@ -23,7 +23,7 @@ const firebaseConfig = {
   messagingSenderId: "379310522450",
   appId: "1:379310522450:web:bac9b80c7560df16a09f8b"
 };
-
+console.disableYellowBox = true;
 
 export default function App() {
   const [isLoaded] = useFonts(customFonts);
