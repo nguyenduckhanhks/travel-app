@@ -10,9 +10,10 @@ const Login = ({navigation}) => {
     const [password, setPassword] = useState('111111')
 
     useEffect(() => {
-        firebase.auth().onAuthStateChanged(user => {
-            if(user) return navigation.navigate('Home') 
-        })
+        // firebase.auth().onAuthStateChanged(user => {
+        //     //if(user) return navigation.navigate('Home') 
+        //     //return navigation.navigate('Home') 
+        // })
     })
 
     const onLogin = () => {
