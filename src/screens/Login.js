@@ -6,8 +6,8 @@ import { COLORS, FONTS } from '../constants';
 import * as firebase from 'firebase'
 
 const Login = ({navigation}) => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('user1@gmail.com')
+    const [password, setPassword] = useState('111111')
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged(user => {
