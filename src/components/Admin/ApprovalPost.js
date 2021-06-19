@@ -40,7 +40,7 @@ const ApprovalPost = ({navigation}) => {
                     .collection('places')
                     .where('status', '==', 'waiting')
                     .startAfter(lastPost)
-                    .limit(1)
+                    .limit(5)
                     .onSnapshot(snaps => {
                         if(snaps.docs.length > 0) {
                             setLastPost(snaps.docs[snaps.docs.length - 1])
