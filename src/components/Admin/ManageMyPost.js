@@ -26,7 +26,7 @@ const ManageMyPost = ({navigation, mode=''}) => {
                     .collection('places')
                     .where('status', '==', mode)
                     .where('auth', '==', uidLogin)
-                    .limit(1)
+                    .limit(5)
                     .onSnapshot(snaps => {
                         setLastPost(snaps.docs[snaps.docs.length - 1])
                         let tmpList = snaps.docs.map(doc => {
@@ -43,7 +43,7 @@ const ManageMyPost = ({navigation, mode=''}) => {
                     .where('status', '==', mode)
                     .where('auth', '==', uidLogin)
                     .startAfter(lastPost)
-                    .limit(1)  
+                    .limit(5)  
                     .onSnapshot(snaps => {
                         if(snaps.docs.length > 0) {
                             setLastPost(snaps.docs[snaps.docs.length - 1])
