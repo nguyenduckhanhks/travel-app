@@ -42,7 +42,7 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
                     .collection('places')
                     .where('auth', '==', uidLogin)
                     .where('status', '==', 'active')
-                    .limit(1)
+                    .limit(5)
                     .onSnapshot(snaps => {
                         setLastPost(snaps.docs[snaps.docs.length - 1])
                         let tmpList = snaps.docs.map(doc => {
@@ -59,7 +59,7 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
                     .where('auth', '==', uidLogin)
                     .where('status', '==', 'active')
                     .startAfter(lastPost)
-                    .limit(1)
+                    .limit(5)
                     .onSnapshot(snaps => {
                         if (snaps.docs.length > 0) {
                             setLastPost(snaps.docs[snaps.docs.length - 1])
@@ -92,7 +92,7 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
                         .where('name', '<=', searchText + '\uf8ff')
                 }
 
-                ft.limit(1)
+                ft.limit(5)
                     .onSnapshot(snaps => {
                         setLastPost(snaps.docs[snaps.docs.length - 1])
                         let tmpList = snaps.docs.map(doc => {
@@ -118,7 +118,7 @@ const Posts = ({ navigation, listPost, setListPost, lastPost, setLastPost, getAl
                 }
 
                 ft.startAfter(lastPost)
-                    .limit(1)
+                    .limit(5)
                     .onSnapshot(snaps => {
                         if (snaps.docs.length > 0) {
                             setLastPost(snaps.docs[snaps.docs.length - 1])
